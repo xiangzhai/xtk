@@ -4,11 +4,22 @@ xtk
 Xiang Tool Kit
 
 
+## Build && Install
+
+```
+./autogen.sh --prefix=/usr
+make
+sudo make install
+```
+
+
 ## TODO
 
-- [ ] Text
+- [ ] EventHandler
+- [x] Window
+- [x] Text
 - [ ] Image
-- [ ] Button
+- [x] Button
 - [ ] ImageButton
 - [ ] Menu
 - [ ] Wayland
