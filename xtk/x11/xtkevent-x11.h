@@ -5,7 +5,7 @@
 
 #include <X11/Xlib.h>
 
-#include "xtkwindow-x11.h"
+#include <xtkwindow-x11.h>
 
 namespace Xtk 
 {

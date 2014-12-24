@@ -1,0 +1,15 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+targets=x11
+
+xtk_binary_version=1.0
+xtk_host=@host@
+
+Name: XTK
+Description: XTK Graphical UI Library
+Version: @VERSION@
+Requires: @XTK_PACKAGES@
+Libs: -L${libdir} -lxtk
+Cflags: -I${includedir}/xtk-1.0 @XTK_CFLAGS@

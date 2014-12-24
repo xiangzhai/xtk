@@ -1,6 +1,7 @@
 // Copyright (C) 2014 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 
 #include "xtkwindow-x11.h"
+#include "xtkutil.h"
 
 #include <iostream>
 
@@ -175,26 +176,11 @@ void XtkWindowX11::resize(int width, int height)
     cairo_xlib_surface_set_size(m_surface, m_width, m_height);
 }
 
-static void htmlToCairo(std::string color, double & r, double & g, double & b)       
-{                                                                                  
-    std::string hex = "0x";                                                        
-                                                                                   
-    if (color[0] != '#' || color.size() != 7) {                                    
-        std::cerr << "ERROR: " << __PRETTY_FUNCTION__                              
-                  << " color html format is wrong" << std::endl;                   
-        return;                                                                    
-    }                                                                              
-                                                                                   
-    r = std::stoul(hex + color.substr(1, 2), nullptr, 16) / 255.0;                 
-    g = std::stoul(hex + color.substr(3, 2), nullptr, 16) / 255.0;                 
-    b = std::stoul(hex + color.substr(5, 2), nullptr, 16) / 255.0;                 
-}
-
 void XtkWindowX11::swap(double alpha) 
 {
     double r, g, b;
 
-    htmlToCairo(m_color, r, g, b);
+    colorHtmlToCairo(m_color, r, g, b);
     cairo_save(context);
     cairo_set_source_rgba(context, r, g, b, alpha);
     cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);

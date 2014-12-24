@@ -1,5 +1,10 @@
 SUBDIRS = x11
 
+xtkincludedir = $(includedir)/xtk-1.0
+xtkinclude_HEADERS = xtk.h	\
+					 xtkutil.h	\
+					 xtktext.h
+
 lib_LTLIBRARIES 	= libxtk.la
 libxtk_la_SOURCES 	= xtkutil.cpp	\
 					  xtktext.cpp
