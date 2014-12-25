@@ -1,10 +1,7 @@
 /* Copyright (C) 2014 Leslie Zhai <xiang.zhai@i-soft.com.cn> */
 
+#include <xtk.h>
 #include <iostream>
-
-#include "xtkdisplay-x11.h"
-#include "xtkwindow-x11.h"
-#include "xtkevent-x11.h"
 
 static Xtk::XtkDisplayX11* display = nullptr;
 static Xtk::XtkWindowX11* window = nullptr;
@@ -30,7 +27,6 @@ static void cleanup()
 
 int main(int argc, char* argv[]) 
 {
-
     // display
     display = new Xtk::XtkDisplayX11;
     if (display == nullptr) {
@@ -43,6 +39,7 @@ int main(int argc, char* argv[])
     
     // event loop
     event = new Xtk::XtkEventX11(display->display(), window);
+    event->run();
 
     /* Mr. cleanup */
     cleanup();

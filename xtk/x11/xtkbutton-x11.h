@@ -23,12 +23,13 @@ public:
                  int x, 
                  int y, 
                  int width, 
-                 int height, 
-                 BUTTON_PRESS_CALLBACK buttonPressCallback, 
-                 void* arg = nullptr);
+                 int height);
     ~XtkButtonX11();
 
     std::string text() const { return m_textStr; }
+
+    void setButtonPressCallback(BUTTON_PRESS_CALLBACK buttonPressCallback, 
+                                void* arg = nullptr);
 
     void buttonPress();
     void draw();
@@ -39,7 +40,7 @@ private:
     int m_width = 0;
     int m_height = 0;
     XtkText* m_text = nullptr;
-    BUTTON_PRESS_CALLBACK m_buttonPressCallback;
+    BUTTON_PRESS_CALLBACK m_buttonPressCallback = nullptr;
     void* m_arg = nullptr;
 };
 

@@ -14,9 +14,7 @@ XtkButtonX11::XtkButtonX11(XtkWindowX11* parent,
                            int x, 
                            int y, 
                            int width, 
-                           int height, 
-                           BUTTON_PRESS_CALLBACK buttonPressCallback, 
-                           void* arg)
+                           int height) 
   : XtkWindowX11(parent->display(), 
                  x, 
                  y, 
@@ -29,25 +27,42 @@ XtkButtonX11::XtkButtonX11(XtkWindowX11* parent,
     m_parent(parent), 
     m_textStr(textStr),
     m_width(width), 
-    m_height(height),
-    m_buttonPressCallback(buttonPressCallback),
-    m_arg(arg)
+    m_height(height)
 {
+#if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     m_text = new XtkText(this->surface(), m_textStr, 
             0, 0, m_width, m_height, 12, "#000000", CENTER);
 }
 
 XtkButtonX11::~XtkButtonX11() 
 {
+#if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     if (m_text) {
         delete m_text;
         m_text = nullptr;
     }
 }
 
-void XtkButtonX11::buttonPress() { m_buttonPressCallback(this, m_arg); }
+void XtkButtonX11::setButtonPressCallback(
+        BUTTON_PRESS_CALLBACK buttonPressCallback, 
+        void* arg) 
+{
+    m_buttonPressCallback = buttonPressCallback;
+    m_arg = arg;
+}
+
+void XtkButtonX11::buttonPress() 
+{ 
+#if XTK_DEBUG
+    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    if (m_buttonPressCallback) 
+        m_buttonPressCallback(this, m_arg); 
+}
 
 void XtkButtonX11::draw() 
 {

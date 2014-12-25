@@ -6,4 +6,10 @@
 #include <xtkutil.h>
 #include <xtktext.h>
 
+#include <x11/xtkdisplay-x11.h>
+#include <x11/xtkevent-x11.h>
+#include <x11/xtkwidget-x11.h>
+#include <x11/xtkwindow-x11.h>
+#include <x11/xtkbutton-x11.h>
+
 #endif // XTK_H

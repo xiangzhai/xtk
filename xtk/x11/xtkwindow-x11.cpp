@@ -17,15 +17,17 @@ XtkWindowX11::XtkWindowX11(Display* display,
                            std::string color, 
                            Window parent, 
                            int border_width, 
-                           WindowType type)
-  : m_display(display), 
+                           X11WindowType type)
+  : XtkWidgetX11(display), 
+    m_display(display), 
     m_width(width), 
     m_height(height),
     m_name(name), 
     m_color(color) 
 {
+#if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
-    
+#endif
     XVisualInfo vinfo;
     XMatchVisualInfo(m_display, DefaultScreen(m_display), 32, TrueColor, &vinfo);
     m_visual = vinfo.visual;
@@ -152,7 +154,9 @@ XtkWindowX11::XtkWindowX11(Display* display,
 
 XtkWindowX11::~XtkWindowX11() 
 {
+#if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     if (context) {
         cairo_destroy(context);
         context = nullptr;
@@ -175,6 +179,8 @@ void XtkWindowX11::resize(int width, int height)
     m_height = height;
     cairo_xlib_surface_set_size(m_surface, m_width, m_height);
 }
+
+void XtkWindowX11::draw() { this->swap(); }
 
 void XtkWindowX11::swap(double alpha) 
 {

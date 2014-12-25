@@ -26,7 +26,9 @@ XtkText::XtkText(cairo_surface_t* parent,
     m_size(size), 
     m_align(align)
 {
+#if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     cairo_text_extents_t extents;
     double r, g, b;
     
@@ -50,7 +52,9 @@ XtkText::XtkText(cairo_surface_t* parent,
 
 XtkText::~XtkText() 
 {
+#if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     if (context) {
         cairo_destroy(context);
         context = nullptr;

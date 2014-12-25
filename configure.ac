@@ -19,6 +19,15 @@ AC_SUBST(XTK_PACKAGES)
 AC_SUBST(XTK_CFLAGS)
 AC_SUBST(XTK_LIBS)
 
+AC_ARG_ENABLE(debug,                                                                
+              [AS_HELP_STRING([--enable-debug=@<:@no/yes@:>@],              
+                              [turn on debugging [default=no]])],,
+              [enable_debug=no])
+
+if test "x$enable_debug" = "xyes"; then                                             
+  test "$cflags_set" = set || CXXFLAGS="$CXXFLAGS -g -DXTK_DEBUG" 
+fi
+
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
  Makefile

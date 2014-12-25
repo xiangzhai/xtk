@@ -4,8 +4,9 @@
 #define XTK_EVENT_X11_H
 
 #include <X11/Xlib.h>
-
 #include <xtkwindow-x11.h>
+#include <xtkwidget-x11.h>
+#include <vector>
 
 namespace Xtk 
 {
@@ -18,10 +19,14 @@ public:
 
     Display* display() const { return m_display; }
 
+    void connect(XtkWidgetX11* widget);
+    void run();
+
 private:
     Display* m_display = nullptr;
     XtkWindowX11* m_window = nullptr;
     bool quit = false;
+    std::vector<XtkWidgetX11*> widgets;
 };
 
 };

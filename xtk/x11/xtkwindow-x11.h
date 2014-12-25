@@ -10,6 +10,8 @@
 #include <cairo-xlib.h>
 #include <string>
 
+#include "xtkwidget-x11.h"
+
 namespace Xtk 
 {
 
@@ -21,7 +23,7 @@ typedef enum {
     _NET_WM_WINDOW_TYPE_DOCK,                                                      
     _NET_WM_WINDOW_TYPE_DESKTOP,                                                   
     _NET_WM_WINDOW_TYPE_FRAMELESS                                                  
-} WindowType;
+} X11WindowType;
 
 struct MwmHints {
     unsigned long flags;
@@ -42,7 +44,7 @@ enum {
     MWM_FUNC_CLOSE = (1L << 5)
 };
 
-class XtkWindowX11 
+class XtkWindowX11 : public XtkWidgetX11 
 {
 public:
     XtkWindowX11(Display* display, 
@@ -54,7 +56,7 @@ public:
                  std::string color = "#FFFFFF", 
                  Window parent = None, 
                  int border_width = 0, 
-                 WindowType type = _NET_WM_WINDOW_TYPE_NORMAL);
+                 X11WindowType type = _NET_WM_WINDOW_TYPE_NORMAL);
     virtual ~XtkWindowX11();
 
     Display* display() const { return m_display; }
@@ -68,6 +70,7 @@ public:
     cairo_surface_t* surface() const { return m_surface; }
 
     void resize(int width, int height);
+    void draw();
     void swap(double alpha = 1.0);
 
 private:
