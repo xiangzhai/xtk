@@ -7,7 +7,7 @@ Xiang Tool Kit
 ## Build && Install
 
 ```
-./autogen.sh --prefix=/usr
+./autogen.sh --prefix=/usr --enable-debug=yes
 make
 sudo make install
 ```
@@ -15,9 +15,12 @@ sudo make install
 
 ## TODO
 
-- [ ] Theme
-- [ ] EventHandler
-- [x] EventHandler/ButtonPress
+- [x] Theme
+- [ ] Theme/oxygen
+- [ ] Event
+- [x] Event/ButtonPress
+- [x] Event/EnterNotify
+- [x] Event/LeaveNotify
 - [x] Window
 - [x] Text
 - [ ] Image

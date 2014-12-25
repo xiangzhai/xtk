@@ -43,6 +43,22 @@ void XtkEventX11::run()
             m_window->resize(event.xconfigure.width, event.xconfigure.height);
             m_window->draw();
             break;
+        case EnterNotify:
+            for (unsigned int i = 0; i < widgets.size(); i++) {
+                if (widgets[i]->window() == event.xbutton.window) {
+                    widgets[i]->enterNotify();
+                    break;
+                }
+            }
+            break;
+        case LeaveNotify:
+            for (unsigned int i = 0; i < widgets.size(); i++) {
+                if (widgets[i]->window() == event.xbutton.window) {
+                    widgets[i]->leaveNotify();
+                    break;
+                }
+            }
+            break;
         case ButtonPress:
             for (unsigned int i = 0; i < widgets.size(); i++) {
                 if (widgets[i]->window() == event.xbutton.window) {

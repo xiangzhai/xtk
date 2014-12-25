@@ -31,6 +31,8 @@ public:
     void setButtonPressCallback(BUTTON_PRESS_CALLBACK buttonPressCallback, 
                                 void* arg = nullptr);
 
+    void enterNotify();
+    void leaveNotify();
     void buttonPress();
     void draw();
 

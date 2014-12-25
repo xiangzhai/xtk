@@ -9,6 +9,13 @@ LT_INIT
 
 CXXFLAGS='-Wall -Werror -std=c++0x'
 
+AC_CHECK_LIB(iniparser, iniparser_load, HAVE_INIPARSER=yes, HAVE_INIPARSE=no)
+if test "$HAVE_INIPARSE" = "no"; then                                               
+ AC_MSG_ERROR([iniparser is required])                                               
+fi                                                                                 
+INIPARSER_LIBS=-liniparser
+AC_SUBST(INIPARSER_LIBS)
+
 X11_REQUIRED=1.6.2
 XTST_REQUIRED=1.2.2
 CAIRO_XLIB_REQUIRED=1.12.16

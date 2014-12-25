@@ -17,6 +17,8 @@ public:
     Display* display() const { return m_display; }
     virtual Window window() const { return m_window; }
 
+    virtual void enterNotify() {}
+    virtual void leaveNotify() {}
     virtual void buttonPress() {}
     virtual void resize(int width, int height) {}
     virtual void draw() {}

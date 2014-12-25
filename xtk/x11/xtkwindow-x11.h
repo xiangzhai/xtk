@@ -10,7 +10,8 @@
 #include <cairo-xlib.h>
 #include <string>
 
-#include "xtkwidget-x11.h"
+#include <xtktheme.h>
+#include <xtkwidget-x11.h>
 
 namespace Xtk 
 {
@@ -47,41 +48,41 @@ enum {
 class XtkWindowX11 : public XtkWidgetX11 
 {
 public:
-    XtkWindowX11(Display* display, 
+    XtkWindowX11(Display* display,
+                 XtkTheme* theme, 
                  int x, 
                  int y, 
                  int width, 
                  int height, 
                  std::string name = "", 
-                 std::string color = "#FFFFFF", 
                  Window parent = None, 
-                 int border_width = 0, 
+                 int borderWidth = 0, 
                  X11WindowType type = _NET_WM_WINDOW_TYPE_NORMAL);
     virtual ~XtkWindowX11();
 
     Display* display() const { return m_display; }
+    XtkTheme* theme() const { return m_theme; }
     Window window() const { return m_window; }
     Visual* visual() const { return m_visual; }
     Atom wmDeleteMessage() const { return m_wmDeleteMessage; }
     int width() const { return m_width; }
     int height() const { return m_height; }
     std::string name() const { return m_name; }
-    std::string color() const { return m_color; }
     cairo_surface_t* surface() const { return m_surface; }
 
     void resize(int width, int height);
     void draw();
-    void swap(double alpha = 1.0);
+    void swap(std::string color = "", double alpha = 1.0);
 
 private:
     Display* m_display = nullptr;
+    XtkTheme* m_theme = nullptr;
     Window m_window = None;
     Visual* m_visual = nullptr;
     Atom m_wmDeleteMessage;
     int m_width = 0;
     int m_height = 0;
-    std::string m_name = "";
-    std::string m_color = "#FFFFFF";
+    std::string m_name;
     cairo_surface_t* m_surface = nullptr;
     cairo_t* context = nullptr;
 };

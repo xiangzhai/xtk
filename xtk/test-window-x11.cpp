@@ -4,6 +4,7 @@
 #include <iostream>
 
 static Xtk::XtkDisplayX11* display = nullptr;
+static Xtk::XtkTheme* theme = nullptr;
 static Xtk::XtkWindowX11* window = nullptr;
 static Xtk::XtkEventX11* event = nullptr;
 
@@ -17,6 +18,11 @@ static void cleanup()
     if (window) {
         delete window;
         window = nullptr;
+    }
+
+    if (theme) {
+        delete theme;
+        theme = nullptr;
     }
 
     if (display) {
@@ -34,11 +40,26 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    // theme
+    theme = new Xtk::XtkTheme;
+    if (theme == nullptr) {
+        cleanup();
+        return 1;
+    }
+
     // window
-    window = new Xtk::XtkWindowX11(display->display(), 0, 0, 300, 200);
-    
+    window = new Xtk::XtkWindowX11(display->display(), theme, 0, 0, 300, 200);
+    if (window == nullptr) {
+        cleanup();
+        return 1;
+    }
+
     // event loop
     event = new Xtk::XtkEventX11(display->display(), window);
+    if (event == nullptr) {
+        cleanup();
+        return 1;
+    }
     event->run();
 
     /* Mr. cleanup */

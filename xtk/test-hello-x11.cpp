@@ -13,7 +13,13 @@ class HelloWindowX11 : public Xtk::XtkWindowX11
 {
 public:
     HelloWindowX11(Display* display, int x, int y, int width, int height) 
-      : Xtk::XtkWindowX11(display, x, y, width, height, "hello-world") 
+      : Xtk::XtkWindowX11(display, 
+                          new Xtk::XtkTheme, 
+                          x, 
+                          y, 
+                          width, 
+                          height, 
+                          "hello-world") 
     {
         std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
         text = new Xtk::XtkText(this->surface(), "Hello world", 0, 0, 400, 80, 50);
@@ -85,9 +91,17 @@ int main(int argc, char* argv[])
 
     // window
     window = new HelloWindowX11(display->display(), 0, 0, 400, 300);
+    if (window == nullptr) {
+        cleanup();
+        return 1;
+    }
 
     // event loop
     event = new Xtk::XtkEventX11(display->display(), window);
+    if (event == nullptr) {
+        cleanup();
+        return 1;
+    }
     event->connect(window->button());
     event->run();
 

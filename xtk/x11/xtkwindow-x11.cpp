@@ -8,22 +8,22 @@
 namespace Xtk 
 {
 
-XtkWindowX11::XtkWindowX11(Display* display, 
+XtkWindowX11::XtkWindowX11(Display* display,
+                           XtkTheme* theme, 
                            int x, 
                            int y, 
                            int width, 
                            int height, 
                            std::string name, 
-                           std::string color, 
                            Window parent, 
-                           int border_width, 
+                           int borderWidth, 
                            X11WindowType type)
   : XtkWidgetX11(display), 
-    m_display(display), 
+    m_display(display),
+    m_theme(theme), 
     m_width(width), 
     m_height(height),
-    m_name(name), 
-    m_color(color) 
+    m_name(name) 
 {
 #if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
@@ -48,7 +48,7 @@ XtkWindowX11::XtkWindowX11(Display* display,
     // create window
     m_window = XCreateWindow(m_display, 
             parent == None ? DefaultRootWindow(m_display) : parent, 
-            x, y, m_width, m_height, border_width, vinfo.depth, 
+            x, y, m_width, m_height, borderWidth, vinfo.depth, 
             CopyFromParent, /* class */
             m_visual, 
             CWOverrideRedirect | CWColormap | CWBorderPixel | CWBackPixel | 
@@ -182,11 +182,15 @@ void XtkWindowX11::resize(int width, int height)
 
 void XtkWindowX11::draw() { this->swap(); }
 
-void XtkWindowX11::swap(double alpha) 
+void XtkWindowX11::swap(std::string color, double alpha) 
 {
     double r, g, b;
 
-    colorHtmlToCairo(m_color, r, g, b);
+    colorHtmlToCairo(
+        (color == "" ? 
+                  m_theme->string("window", "backgroundcolor", "#FFFFFF") : 
+                  color), 
+        r, g, b);
     cairo_save(context);
     cairo_set_source_rgba(context, r, g, b, alpha);
     cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);

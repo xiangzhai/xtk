@@ -4,6 +4,7 @@
 #define XTK_H
 
 #include <xtkutil.h>
+#include <xtktheme.h>
 #include <xtktext.h>
 
 #include <x11/xtkdisplay-x11.h>
