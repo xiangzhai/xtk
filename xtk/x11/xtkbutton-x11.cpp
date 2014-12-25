@@ -34,6 +34,7 @@ XtkButtonX11::XtkButtonX11(XtkWindowX11* parent,
 #endif
     m_text = new XtkText(this->surface(), m_textStr, 
             0, 0, m_width, m_height, 12, "#000000", CENTER);
+    m_text->setFamily(this->theme()->string("font", "family", "Serif"));
 }
 
 XtkButtonX11::~XtkButtonX11() 

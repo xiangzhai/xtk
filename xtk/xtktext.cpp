@@ -24,12 +24,14 @@ XtkText::XtkText(cairo_surface_t* parent,
     m_width(width),
     m_height(height), 
     m_size(size), 
-    m_align(align)
+    m_align(align),
+    m_slant(slant),
+    m_weight(weight),
+    m_family(family)
 {
 #if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
-    cairo_text_extents_t extents;
     double r, g, b;
     
     surface = cairo_surface_create_for_rectangle(parent, x, y, width, height);
@@ -40,10 +42,7 @@ XtkText::XtkText(cairo_surface_t* parent,
         if (context == nullptr) 
             std::cerr << "ERROR: fail to create text context" << std::endl;
         else {
-            cairo_select_font_face(context, family.c_str(), slant, weight);
-            cairo_set_font_size(context, size);
-            cairo_text_extents(context, m_text.c_str(), &extents);
-            text_width = extents.width;
+            initFont();
             colorHtmlToCairo(color, r, g, b);
             cairo_set_source_rgb(context, r, g, b);
         }
@@ -66,6 +65,25 @@ XtkText::~XtkText()
     }
 }
 
+void XtkText::initFont() 
+{
+    cairo_text_extents_t extents;                                                  
+    cairo_select_font_face(context, m_family.c_str(), m_slant, m_weight);          
+    cairo_set_font_size(context, m_size);                                          
+    cairo_text_extents(context, m_text.c_str(), &extents);                         
+    textWidth = extents.width;
+}
+
+void XtkText::setFamily(const std::string & family) 
+{
+    if (m_family == family) 
+        return;
+
+    m_family = family;
+    initFont();
+    draw();
+}
+
 void XtkText::draw() 
 {
     int y = m_size + (m_height - m_size) / 2;
@@ -73,7 +91,7 @@ void XtkText::draw()
     if (m_align == LEFT) {
         cairo_move_to(context, 0, y);
     } else if (m_align == CENTER) {
-        cairo_move_to(context, (m_width - text_width) / 2, y);
+        cairo_move_to(context, (m_width - textWidth) / 2, y);
     }
     cairo_show_text(context, m_text.c_str());
 }

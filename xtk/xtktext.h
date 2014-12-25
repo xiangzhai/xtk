@@ -9,6 +9,7 @@
 namespace Xtk 
 {
 
+// FIXME: enum type TOO low
 typedef enum {
     LEFT, 
     CENTER, 
@@ -32,7 +33,13 @@ public:
             std::string family = "Serif");
     ~XtkText();
 
+    std::string family() const { return m_family; }
+    void setFamily(const std::string & family);
+
     void draw();
+
+private:
+    void initFont();
 
 private:
     cairo_surface_t* surface = nullptr;
@@ -42,7 +49,10 @@ private:
     int m_height = 0;
     int m_size = 0;
     TextAlign m_align;
-    int text_width = 0;
+    cairo_font_slant_t m_slant;
+    cairo_font_weight_t m_weight;
+    std::string m_family;
+    int textWidth = 0;
 };
 
 };

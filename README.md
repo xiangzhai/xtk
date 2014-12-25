@@ -22,7 +22,9 @@ sudo make install
 - [x] Event/EnterNotify
 - [x] Event/LeaveNotify
 - [x] Window
+- [x] Window/Theme
 - [x] Text
+- [x] Text/Theme
 - [ ] Image
 - [x] Button
 - [ ] Button/ImageButton
