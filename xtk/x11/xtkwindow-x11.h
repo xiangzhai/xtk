@@ -70,6 +70,7 @@ public:
     std::string name() const { return m_name; }
     cairo_surface_t* surface() const { return m_surface; }
 
+    void setSize(int width, int height);
     void resize(int width, int height);
     void draw();
     void swap(std::string color = "", double alpha = 1.0);

@@ -29,15 +29,24 @@ XtkTheme::~XtkTheme()
     }
 }
 
+int XtkTheme::getInt(std::string section, std::string key, int notfound) const 
+{
+    if (ini == nullptr) 
+        return 1;
+
+    std::string keyStr = section + ":" + key;
+    return iniparser_getint(ini, keyStr.c_str(), notfound);
+}
+
 std::string XtkTheme::string(std::string section, 
                              std::string key, 
-                             std::string error) const 
+                             std::string notfound) const 
 {
     if (ini == nullptr) 
         return "";
 
     std::string keyStr = section + ":" + key;
-    return std::string(iniparser_getstring(ini, keyStr.c_str(), (char*)error.c_str()));
+    return std::string(iniparser_getstring(ini, keyStr.c_str(), (char*)notfound.c_str()));
 }
 
 }

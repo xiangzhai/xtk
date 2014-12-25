@@ -22,9 +22,10 @@ public:
                           "hello-world") 
     {
         std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
-        text = new Xtk::XtkText(this->surface(), "Hello world", 0, 0, 400, 80, 50);
+        text = new Xtk::XtkText(this->surface(), "Hello world 你好世界", 
+                0, 0, 400, 80, 25);
         text->setFamily(this->theme()->string("font", "family", "Serif"));
-        m_button = new Xtk::XtkButtonX11(this, "Clicke Me ;)", 0, 80, 400, 80);
+        m_button = new Xtk::XtkButtonX11(this, "Clicke Me 点我", 0, 80, 400, 80);
         m_button->setButtonPressCallback(buttonPress);
     }
     ~HelloWindowX11() 
@@ -54,7 +55,8 @@ private:
     {
         std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << button << " " 
                   << arg << " " << button->text() << std::endl;
-    
+   
+        button->setSize(100, 40);
         return nullptr;
     }
 

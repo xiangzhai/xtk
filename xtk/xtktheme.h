@@ -18,9 +18,10 @@ public:
     ~XtkTheme();
 
     std::string name() const { return m_name; }
+    int getInt(std::string section, std::string key, int notfound) const;
     std::string string(std::string section, 
                        std::string key, 
-                       std::string error) const;
+                       std::string notfound) const;
 
 private:
     std::string m_name;

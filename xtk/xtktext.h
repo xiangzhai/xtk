@@ -36,6 +36,7 @@ public:
     std::string family() const { return m_family; }
     void setFamily(const std::string & family);
 
+    void setSize(int width, int height);
     void draw();
 
 private:

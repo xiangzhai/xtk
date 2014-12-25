@@ -84,6 +84,16 @@ void XtkText::setFamily(const std::string & family)
     draw();
 }
 
+void XtkText::setSize(int width, int height) 
+{
+    if (m_width == width && m_height == height) 
+        return;
+
+    m_width = width;
+    m_height = height;
+    draw();
+}
+
 void XtkText::draw() 
 {
     int y = m_size + (m_height - m_size) / 2;

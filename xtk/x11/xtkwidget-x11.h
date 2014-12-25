@@ -20,6 +20,7 @@ public:
     virtual void enterNotify() {}
     virtual void leaveNotify() {}
     virtual void buttonPress() {}
+    virtual void setSize(int width, int height) {}
     virtual void resize(int width, int height) {}
     virtual void draw() {}
     virtual void swap(double alpha = 1.0) {}

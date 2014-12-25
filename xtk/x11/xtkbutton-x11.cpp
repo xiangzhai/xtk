@@ -102,6 +102,21 @@ void XtkButtonX11::buttonPress()
         m_buttonPressCallback(this, m_arg); 
 }
 
+// FIXME: need send Expose event?
+void XtkButtonX11::setSize(int width, int height) 
+{
+    if (m_width == width && m_height == height) 
+        return;
+
+    m_width = width;
+    m_height = height;
+    XResizeWindow(this->display(), this->window(), width, height);
+    XSync(this->display(), False);
+    resize(width, height);
+    m_text->setSize(width, height);
+    draw();
+}
+
 void XtkButtonX11::draw() 
 {
     cairo_t* context = nullptr;
@@ -116,7 +131,7 @@ void XtkButtonX11::draw()
     colorHtmlToCairo(this->theme()->string("button", "bordercolor", "#ffffff"), 
         r, g, b);
     cairo_set_source_rgb(context, r, g, b);
-    cairo_set_line_width(context, 2);
+    cairo_set_line_width(context, this->theme()->getInt("button", "borderwidth", 1));
     cairo_rectangle(context, 0, 0, m_width, m_height);
     cairo_stroke_preserve(context);
     

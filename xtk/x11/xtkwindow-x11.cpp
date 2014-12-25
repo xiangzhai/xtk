@@ -173,6 +173,12 @@ XtkWindowX11::~XtkWindowX11()
     }
 }
 
+void XtkWindowX11::setSize(int width, int height) 
+{
+    XResizeWindow(m_display, m_window, width, height);
+    resize(width, height);
+}
+
 void XtkWindowX11::resize(int width, int height) 
 {
     m_width = width;

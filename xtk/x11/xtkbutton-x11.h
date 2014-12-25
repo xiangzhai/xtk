@@ -34,6 +34,7 @@ public:
     void enterNotify();
     void leaveNotify();
     void buttonPress();
+    void setSize(int width, int height);
     void draw();
 
 private:
