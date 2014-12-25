@@ -17,11 +17,11 @@ sudo make install
 
 - [ ] Theme
 - [ ] EventHandler
--- [x] ButtonPress
+- [x] EventHandler/ButtonPress
 - [x] Window
 - [x] Text
 - [ ] Image
 - [x] Button
--- [ ] ImageButton
+- [ ] Button/ImageButton
 - [ ] Menu
 - [ ] Wayland
