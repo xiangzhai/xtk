@@ -55,4 +55,9 @@ void XtkWidgetX11::activateWindow(Window window)
     sendNETWMMessage(window, "_NET_ACTIVE_WINDOW", 2, CurrentTime);
 }
 
+void XtkWidgetX11::minimizeWindow(Window window) 
+{
+    XIconifyWindow(m_display, window, DefaultScreen(m_display));
+}
+
 }

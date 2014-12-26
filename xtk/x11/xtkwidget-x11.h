@@ -19,14 +19,16 @@ public:
     virtual Window window() const { return m_window; }
     virtual Atom wmDeleteMessage() const { return m_wmDeleteMessage; }
 
-    virtual void sendNETWMMessage(Window window, 
-                                  std::string atomName, 
-                                  unsigned long l0 = 0, 
-                                  unsigned long l1 = 0, 
-                                  unsigned long l2 = 0, 
-                                  unsigned long l3 = 0, 
-                                  unsigned long l4 = 0);
-    virtual void activateWindow(Window window);
+    void sendNETWMMessage(Window window, 
+                          std::string atomName, 
+                          unsigned long l0 = 0, 
+                          unsigned long l1 = 0, 
+                          unsigned long l2 = 0, 
+                          unsigned long l3 = 0, 
+                          unsigned long l4 = 0);
+    void activateWindow(Window window);
+    void minimizeWindow(Window window);
+    
     virtual void close() {}
     virtual void enterNotify() {}
     virtual void leaveNotify() {}
