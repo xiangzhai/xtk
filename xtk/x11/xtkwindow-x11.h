@@ -8,10 +8,10 @@
 #include <X11/Xatom.h>
 #include <cairo.h>
 #include <cairo-xlib.h>
-#include <string>
-
 #include <xtktheme.h>
 #include <x11/xtkwidget-x11.h>
+#include <string>
+#include <vector>
 
 namespace Xtk 
 {
@@ -69,7 +69,9 @@ public:
     int height() const { return m_height; }
     std::string name() const { return m_name; }
     cairo_surface_t* surface() const { return m_surface; }
+    std::vector<XtkWidgetX11*> widgets() const { return m_widgets; }
 
+    void close();
     void setSize(int width, int height);
     void resize(int width, int height);
     void draw();
@@ -86,6 +88,7 @@ private:
     std::string m_name;
     cairo_surface_t* m_surface = nullptr;
     cairo_t* context = nullptr;
+    std::vector<XtkWidgetX11*> m_widgets;
 };
 
 };

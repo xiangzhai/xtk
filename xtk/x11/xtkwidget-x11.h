@@ -14,9 +14,10 @@ public:
     XtkWidgetX11(Display* display); 
     virtual ~XtkWidgetX11();
 
-    Display* display() const { return m_display; }
+    virtual Display* display() const { return m_display; }
     virtual Window window() const { return m_window; }
 
+    virtual void close() {}
     virtual void enterNotify() {}
     virtual void leaveNotify() {}
     virtual void buttonPress() {}

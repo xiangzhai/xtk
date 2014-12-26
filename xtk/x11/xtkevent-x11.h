@@ -14,7 +14,7 @@ namespace Xtk
 class XtkEventX11 
 {
 public:
-    XtkEventX11(Display* display, XtkWindowX11* window);
+    XtkEventX11(Display* display, XtkWindowX11* parent);
     ~XtkEventX11();
 
     Display* display() const { return m_display; }
@@ -24,7 +24,7 @@ public:
 
 private:
     Display* m_display = nullptr;
-    XtkWindowX11* m_window = nullptr;
+    XtkWindowX11* m_parent = nullptr;
     bool quit = false;
     std::vector<XtkWidgetX11*> widgets;
 };

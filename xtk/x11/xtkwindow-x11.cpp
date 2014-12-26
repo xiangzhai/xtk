@@ -157,26 +157,33 @@ XtkWindowX11::~XtkWindowX11()
 #if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
-    if (context) {
-        cairo_destroy(context);
-        context = nullptr;
-    }
-
-    if (m_surface) {
-        cairo_surface_destroy(m_surface);
-        m_surface = nullptr;
-    }
-
-    if (m_display) {
-        if (m_window != None) 
-            XDestroyWindow(m_display, m_window);
-    }
+    close();
 }
 
 void XtkWindowX11::setSize(int width, int height) 
 {
     XResizeWindow(m_display, m_window, width, height);
     resize(width, height);
+}
+
+void XtkWindowX11::close() 
+{
+    if (context) {                                                                 
+        cairo_destroy(context);                                                    
+        context = nullptr;                                                         
+    }                                                                              
+                                                                                   
+    if (m_surface) {                                                               
+        cairo_surface_destroy(m_surface);                                          
+        m_surface = nullptr;                                                       
+    }                                                                              
+                                                                                   
+    if (m_display) {                                                               
+        if (m_window != None) {                                                    
+            XDestroyWindow(m_display, m_window);                                   
+            m_window = None;                                                       
+        }                                                                          
+    }
 }
 
 void XtkWindowX11::resize(int width, int height) 
