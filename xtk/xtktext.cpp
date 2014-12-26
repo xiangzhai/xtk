@@ -42,7 +42,7 @@ XtkText::XtkText(cairo_surface_t* parent,
         if (context == nullptr) 
             std::cerr << "ERROR: fail to create text context" << std::endl;
         else {
-            initFont();
+            calcTextSize();
             colorHtmlToCairo(color, r, g, b);
             cairo_set_source_rgb(context, r, g, b);
         }
@@ -65,7 +65,7 @@ XtkText::~XtkText()
     }
 }
 
-void XtkText::initFont() 
+void XtkText::calcTextSize() 
 {
     cairo_text_extents_t extents;                                                  
     cairo_select_font_face(context, m_family.c_str(), m_slant, m_weight);          
@@ -80,7 +80,17 @@ void XtkText::setFamily(const std::string & family)
         return;
 
     m_family = family;
-    initFont();
+    calcTextSize();
+    draw();
+}
+
+void XtkText::setText(const std::string & text) 
+{
+    if (m_text == text) 
+        return;
+
+    m_text = text;
+    calcTextSize();
     draw();
 }
 
@@ -98,9 +108,9 @@ void XtkText::draw()
 {
     int y = m_size + (m_height - m_size) / 2;
 
-    if (m_align == LEFT) {
+    if (m_align == MIDDLE_LEFT) {
         cairo_move_to(context, 0, y);
-    } else if (m_align == CENTER) {
+    } else if (m_align == MIDDLE_CENTER) {
         cairo_move_to(context, (m_width - textWidth) / 2, y);
     }
     cairo_show_text(context, m_text.c_str());

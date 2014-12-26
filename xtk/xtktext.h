@@ -9,11 +9,10 @@
 namespace Xtk 
 {
 
-// FIXME: enum type TOO low
 typedef enum {
-    LEFT, 
-    CENTER, 
-    RIGHT
+    TOP_LEFT, TOP_CENTER, TOP_RIGHT,
+    MIDDLE_LEFT, MIDDLE_CENTER, MIDDLE_RIGHT, 
+    BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT
 } TextAlign;
 
 class XtkText 
@@ -27,7 +26,7 @@ public:
             int height, 
             int size = 12, 
             std::string color = "#000000", 
-            TextAlign align = LEFT, 
+            TextAlign align = MIDDLE_LEFT, 
             cairo_font_slant_t slant = CAIRO_FONT_SLANT_NORMAL, 
             cairo_font_weight_t weight = CAIRO_FONT_WEIGHT_NORMAL, 
             std::string family = "Serif");
@@ -35,12 +34,14 @@ public:
 
     std::string family() const { return m_family; }
     void setFamily(const std::string & family);
+    std::string text() const { return m_text; }
+    void setText(const std::string & text);
 
     void setSize(int width, int height);
     void draw();
 
 private:
-    void initFont();
+    void calcTextSize();
 
 private:
     cairo_surface_t* surface = nullptr;

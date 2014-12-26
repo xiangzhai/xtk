@@ -91,8 +91,11 @@ private:
         HelloWindowX11* thisPtr = reinterpret_cast<HelloWindowX11*>(arg);
         std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << button << " " 
                   << arg << " " << button->text() << std::endl;
+        // TODO: dynamic event disconnect
         if (thisPtr->m_event) 
             thisPtr->m_event->disconnect(button);
+
+        button->setText("disconnected 断开信号了");
         return nullptr;
     }
 

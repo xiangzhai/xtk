@@ -25,6 +25,46 @@ XtkEventX11::~XtkEventX11()
 #endif
 }
 
+void XtkEventX11::setClientMessageCallback(
+        CLIENT_MESSAGE_CALLBACK clientMessageCallback, 
+        void* arg) 
+{
+    m_clientMessageCallback = clientMessageCallback;
+    m_clientMessageArg = arg;
+}
+
+void XtkEventX11::setPropertyNotifyCallback(
+        PROPERTY_NOTIFY_CALLBACK propertyNotifyCallback, 
+        void* arg) 
+{
+    m_propertyNotifyCallback = propertyNotifyCallback;
+    m_propertyNotifyArg = arg;
+}
+
+void XtkEventX11::setXDamageNotifyCallback(
+        XDAMAGE_NOTIFY_CALLBACK xDamageNotifyCallback, 
+        void* arg) 
+{
+    m_xDamageNotifyCallback = xDamageNotifyCallback;
+    m_xDamageNotifyArg = arg;
+}
+
+void XtkEventX11::setDestroyNotifyCallback(
+        DESTROY_NOTIFY_CALLBACK destroyNotifyCallback, 
+        void* arg) 
+{
+    m_destroyNotifyCallback = destroyNotifyCallback;
+    m_destroyNotifyArg = arg;
+}
+
+void XtkEventX11::setConfigureNotifyCallback(
+        CONFIGURE_NOTIFY_CALLBACK configureNotifyCallback, 
+        void* arg) 
+{
+    m_configureNotifyCallback = configureNotifyCallback;
+    m_configureNotifyArg = arg;
+}
+
 void XtkEventX11::connect(XtkWidgetX11* widget) { widgets.push_back(widget); }
 
 void XtkEventX11::disconnect(XtkWidgetX11* widget) 
@@ -41,63 +81,88 @@ void XtkEventX11::disconnect(XtkWidgetX11* widget)
 
 void XtkEventX11::run() 
 {
-    XEvent event;
+    int damageEventBase = 0, damageErrorBase;
 
-    while (quit == false && !XNextEvent(m_display, &event)) {
-        switch (event.type) {
-        case ClientMessage:
-            if ((Atom)event.xclient.data.l[0] == m_parent->wmDeleteMessage()) {
-                if (event.xclient.window == m_parent->window()) {
+    XDamageQueryExtension(m_display, &damageEventBase, &damageErrorBase);
+
+    while (quit == false && !XNextEvent(m_display, &m_event)) {
+        
+        if (m_event.type == ClientMessage) {
+            if ((Atom)m_event.xclient.data.l[0] == m_parent->wmDeleteMessage()) {
+                if (m_event.xclient.window == m_parent->window()) {
                     quit = true;
-                    break;
+                    return;
                 } else {
                     for (unsigned int i = 0; i < widgets.size(); i++) {
-                        if (widgets[i]->window() == event.xclient.window) {
+                        if (widgets[i]->window() == m_event.xclient.window) {
                             widgets[i]->close();
                         }
                     }
                 }
-            }  
-            break;
-        case Expose:
+            }
+
+            if (m_clientMessageCallback) 
+                m_clientMessageCallback(this, m_clientMessageArg);
+        }
+        
+        if (m_event.type == Expose) {
             for (unsigned int i = 0; i < widgets.size(); i++) {
-                if (widgets[i]->window() == event.xexpose.window) {
+                if (widgets[i]->window() == m_event.xexpose.window) {
                     widgets[i]->draw();
                 }
             }
-            break;
-        case ConfigureNotify:
+        }
+        
+        if (m_event.type == PropertyNotify) {
+            if (m_propertyNotifyCallback) 
+                m_propertyNotifyCallback(this, m_propertyNotifyArg);
+        }
+
+        if (m_event.type == damageEventBase + XDamageNotify) {
+            if (m_xDamageNotifyCallback) 
+                m_xDamageNotifyCallback(this, m_xDamageNotifyArg);
+        }
+
+        if (m_event.type == DestroyNotify) {
+            if (m_destroyNotifyCallback) 
+                m_destroyNotifyCallback(this, m_destroyNotifyArg);
+        }
+
+        if (m_event.type == ConfigureNotify) {
             for (unsigned int i = 0; i < widgets.size(); i++) {
-                if (widgets[i]->window() == event.xconfigure.window) {
-                    widgets[i]->resize(event.xconfigure.width, 
-                                       event.xconfigure.height);
+                if (widgets[i]->window() == m_event.xconfigure.window) {
+                    widgets[i]->resize(m_event.xconfigure.width, 
+                                       m_event.xconfigure.height);
                     widgets[i]->draw();
                 }
             }
-            break;
-        case EnterNotify:
+
+            if (m_configureNotifyCallback) 
+                m_configureNotifyCallback(this, m_configureNotifyArg);
+        }
+
+        if (m_event.type == EnterNotify) {
             for (unsigned int i = 0; i < widgets.size(); i++) {
-                if (widgets[i]->window() == event.xbutton.window) {
+                if (widgets[i]->window() == m_event.xbutton.window) {
                     widgets[i]->enterNotify();
                 }
             }
-            break;
-        case LeaveNotify:
+        }
+
+        if (m_event.type == LeaveNotify) {
             for (unsigned int i = 0; i < widgets.size(); i++) {
-                if (widgets[i]->window() == event.xbutton.window) {
+                if (widgets[i]->window() == m_event.xbutton.window) {
                     widgets[i]->leaveNotify();
                 }
             }
-            break;
-        case ButtonPress:
+        }
+
+        if (m_event.type == ButtonPress) {
             for (unsigned int i = 0; i < widgets.size(); i++) {
-                if (widgets[i]->window() == event.xbutton.window) {
+                if (widgets[i]->window() == m_event.xbutton.window) {
                     widgets[i]->buttonPress();
                 }
             }
-            break;
-        default:
-            break;
         }
     }
 }

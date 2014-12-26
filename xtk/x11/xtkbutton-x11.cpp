@@ -3,14 +3,13 @@
 #include "xtkbutton-x11.h"
 #include "xtkutil.h"
 
-#include <cairo.h>
 #include <iostream>
 
 namespace Xtk 
 {
 
 XtkButtonX11::XtkButtonX11(XtkWindowX11* parent, 
-                           std::string textStr, 
+                           std::string text, 
                            int x, 
                            int y, 
                            int width, 
@@ -25,16 +24,19 @@ XtkButtonX11::XtkButtonX11(XtkWindowX11* parent,
                  parent->window(), 
                  0), 
     m_parent(parent), 
-    m_textStr(textStr),
+    m_text(text),
     m_width(width), 
     m_height(height)
 {
 #if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
-    m_text = new XtkText(this->surface(), m_textStr, 
-            0, 0, m_width, m_height, 12, "#000000", CENTER);
-    m_text->setFamily(this->theme()->string("font", "family", "Serif"));
+    m_textObj = new XtkText(this->surface(), m_text, 
+            0, 0, m_width, m_height, 12, "#000000", MIDDLE_CENTER);
+    m_textObj->setFamily(this->theme()->string("font", "family", "Serif"));
+    context = cairo_create(this->surface());
+    if (context == nullptr) 
+        std::cerr << "ERROR: fail to create context" << std::endl;
 }
 
 XtkButtonX11::~XtkButtonX11() 
@@ -42,9 +44,9 @@ XtkButtonX11::~XtkButtonX11()
 #if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
-    if (m_text) {
-        delete m_text;
-        m_text = nullptr;
+    if (m_textObj) {
+        delete m_textObj;
+        m_textObj = nullptr;
     }
 }
 
@@ -58,7 +60,6 @@ void XtkButtonX11::setButtonPressCallback(
 
 void XtkButtonX11::enterNotify() 
 {
-    cairo_t* context = nullptr;
     double r, g, b;
 
 #if XTK_DEBUG
@@ -67,10 +68,6 @@ void XtkButtonX11::enterNotify()
     
     this->swap(this->theme()->string("button", "backgroundcolor", "#ffffff"));
 
-    context = cairo_create(this->surface());
-    if (context == nullptr) 
-        return;
-
     colorHtmlToCairo(this->theme()->string("button", "borderhovercolor", "#ffffff"), 
         r, g, b);                                                                  
     cairo_set_source_rgb(context, r, g, b);                                        
@@ -78,10 +75,7 @@ void XtkButtonX11::enterNotify()
     cairo_rectangle(context, 0, 0, m_width, m_height);                             
     cairo_stroke_preserve(context);                                                
                                                                                    
-    m_text->draw();                                                                
-                                                                                   
-    cairo_destroy(context);                                                        
-    context = nullptr;
+    m_textObj->draw();                                                                
 }
 
 void XtkButtonX11::leaveNotify() 
@@ -89,7 +83,6 @@ void XtkButtonX11::leaveNotify()
 #if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
-
     draw();
 }
 
@@ -102,6 +95,16 @@ void XtkButtonX11::buttonPress()
         m_buttonPressCallback(this, m_arg); 
 }
 
+void XtkButtonX11::setText(const std::string & text) 
+{
+    if (m_text == text) 
+        return;
+
+    m_text = text;
+    m_textObj->setText(m_text);
+    draw();
+}
+
 // FIXME: need send Expose event?
 void XtkButtonX11::setSize(int width, int height) 
 {
@@ -112,20 +115,15 @@ void XtkButtonX11::setSize(int width, int height)
     m_height = height;
     XResizeWindow(this->display(), this->window(), width, height);
     resize(width, height);
-    m_text->setSize(width, height);
+    m_textObj->setSize(width, height);
     draw();
 }
 
 void XtkButtonX11::draw() 
 {
-    cairo_t* context = nullptr;
     double r, g, b;
 
     this->swap(this->theme()->string("button", "backgroundcolor", "#ffffff"));
-
-    context = cairo_create(this->surface());
-    if (context == nullptr) 
-        return;
 
     colorHtmlToCairo(this->theme()->string("button", "bordercolor", "#ffffff"), 
         r, g, b);
@@ -134,10 +132,7 @@ void XtkButtonX11::draw()
     cairo_rectangle(context, 0, 0, m_width, m_height);
     cairo_stroke_preserve(context);
     
-    m_text->draw();
-
-    cairo_destroy(context);
-    context = nullptr;
+    m_textObj->draw();
 }
 
 }

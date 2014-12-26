@@ -4,6 +4,7 @@
 #define XTK_BUTTON_X11_H
 
 #include <x11/xtkwindow-x11.h>
+#include <cairo.h>
 #include <xtktext.h>
 
 #include <string>
@@ -19,14 +20,15 @@ class XtkButtonX11 : public XtkWindowX11
 {
 public:
     XtkButtonX11(XtkWindowX11* parent, 
-                 std::string textStr, 
+                 std::string text, 
                  int x, 
                  int y, 
                  int width, 
                  int height);
     ~XtkButtonX11();
 
-    std::string text() const { return m_textStr; }
+    std::string text() const { return m_text; }
+    void setText(const std::string & text);
 
     void setButtonPressCallback(BUTTON_PRESS_CALLBACK buttonPressCallback, 
                                 void* arg = nullptr);
@@ -39,10 +41,11 @@ public:
 
 private:
     XtkWindowX11* m_parent = nullptr;
-    std::string m_textStr;
+    std::string m_text;
     int m_width = 0;
     int m_height = 0;
-    XtkText* m_text = nullptr;
+    XtkText* m_textObj = nullptr;
+    cairo_t* context = nullptr;
     BUTTON_PRESS_CALLBACK m_buttonPressCallback = nullptr;
     void* m_arg = nullptr;
 };
