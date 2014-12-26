@@ -111,7 +111,6 @@ void XtkButtonX11::setSize(int width, int height)
     m_width = width;
     m_height = height;
     XResizeWindow(this->display(), this->window(), width, height);
-    XSync(this->display(), False);
     resize(width, height);
     m_text->setSize(width, height);
     draw();

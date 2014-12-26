@@ -26,7 +26,7 @@ sudo make install
 - [x] Window/Theme
 - [x] Text
 - [x] Text/Theme
-- [ ] Image
+- [x] Image
 - [x] Button
 - [ ] Button/setSize
 - [ ] Button/ImageButton

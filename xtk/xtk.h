@@ -6,6 +6,7 @@
 #include <xtkutil.h>
 #include <xtktheme.h>
 #include <xtktext.h>
+#include <xtkimage.h>
 
 #include <x11/xtkdisplay-x11.h>
 #include <x11/xtkevent-x11.h>

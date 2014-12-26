@@ -4,12 +4,14 @@ xtkincludedir = $(includedir)/xtk-1.0
 xtkinclude_HEADERS = xtk.h	\
 					 xtkutil.h	\
 					 xtktheme.h	\
-					 xtktext.h
+					 xtktext.h	\
+					 xtkimage.h
 
 lib_LTLIBRARIES 	= libxtk.la
 libxtk_la_SOURCES 	= xtkutil.cpp	\
 					  xtktheme.cpp	\
-					  xtktext.cpp
+					  xtktext.cpp	\
+					  xtkimage.cpp
 libxtk_la_CXXFLAGS 	= ${XTK_CFLAGS}	-DDATADIR=\""$(datadir)/xtk"\"
 libxtk_la_LIBADD 	= ${XTK_LIBS} ${INIPARSER_LIBS}
 libxtk_la_LIBADD    += x11/libxtk-x11.la
