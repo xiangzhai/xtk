@@ -11,7 +11,7 @@
 #include <string>
 
 #include <xtktheme.h>
-#include <xtkwidget-x11.h>
+#include <x11/xtkwidget-x11.h>
 
 namespace Xtk 
 {

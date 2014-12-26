@@ -3,7 +3,7 @@
 #ifndef XTK_BUTTON_X11_H
 #define XTK_BUTTON_X11_H
 
-#include <xtkwindow-x11.h>
+#include <x11/xtkwindow-x11.h>
 #include <xtktext.h>
 
 #include <string>

@@ -4,8 +4,8 @@
 #define XTK_EVENT_X11_H
 
 #include <X11/Xlib.h>
-#include <xtkwindow-x11.h>
-#include <xtkwidget-x11.h>
+#include <x11/xtkwindow-x11.h>
+#include <x11/xtkwidget-x11.h>
 #include <vector>
 
 namespace Xtk 
