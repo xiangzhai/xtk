@@ -3,11 +3,12 @@
 #include "xtkevent-x11.h"
 
 #include <iostream>
+#include <algorithm>
 
 namespace Xtk 
 {
 
-XtkEventX11::XtkEventX11(Display* display, XtkWindowX11* parent)
+XtkEventX11::XtkEventX11(Display* display, XtkWidgetX11* parent)
   : m_display(display), 
     m_parent(parent) 
 {
@@ -25,6 +26,18 @@ XtkEventX11::~XtkEventX11()
 }
 
 void XtkEventX11::connect(XtkWidgetX11* widget) { widgets.push_back(widget); }
+
+void XtkEventX11::disconnect(XtkWidgetX11* widget) 
+{
+    std::vector<XtkWidgetX11*>::iterator iter = std::find(widgets.begin(), 
+            widgets.end(), widget);
+
+    if (iter == widgets.end()) { 
+        return;
+    }
+
+    widgets.erase(iter);
+}
 
 void XtkEventX11::run() 
 {

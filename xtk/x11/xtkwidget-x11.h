@@ -16,6 +16,7 @@ public:
 
     virtual Display* display() const { return m_display; }
     virtual Window window() const { return m_window; }
+    virtual Atom wmDeleteMessage() const { return m_wmDeleteMessage; }
 
     virtual void close() {}
     virtual void enterNotify() {}
@@ -29,6 +30,7 @@ public:
 private:
     Display* m_display = nullptr;
     Window m_window = None;
+    Atom m_wmDeleteMessage;
 };
 
 };

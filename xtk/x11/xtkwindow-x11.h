@@ -10,6 +10,7 @@
 #include <cairo-xlib.h>
 #include <xtktheme.h>
 #include <x11/xtkwidget-x11.h>
+#include <x11/xtkevent-x11.h>
 #include <string>
 #include <vector>
 
@@ -62,6 +63,8 @@ public:
 
     Display* display() const { return m_display; }
     XtkTheme* theme() const { return m_theme; }
+    XtkEventX11* event() const { return m_event; }
+    void setEvent(XtkEventX11* event) { m_event = event; }
     Window window() const { return m_window; }
     Visual* visual() const { return m_visual; }
     Atom wmDeleteMessage() const { return m_wmDeleteMessage; }
@@ -80,6 +83,7 @@ public:
 private:
     Display* m_display = nullptr;
     XtkTheme* m_theme = nullptr;
+    XtkEventX11* m_event = nullptr;
     Window m_window = None;
     Visual* m_visual = nullptr;
     Atom m_wmDeleteMessage;

@@ -2,7 +2,6 @@
 
 #include <xtk.h>
 #include <iostream>
-#include <vector>
 
 class HelloWindowX11;
 
@@ -24,12 +23,17 @@ public:
                           "hello-world") 
     {
         std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
+        
         text = new Xtk::XtkText(this->surface(), "Hello world 你好世界", 
-                0, 0, 400, 80, 25);
+                10, 0, 400, 80, 25);
         text->setFamily(this->theme()->string("font", "family", "Serif"));
-        button = new Xtk::XtkButtonX11(this, "Clicke Me 点我", 0, 80, 100, 40);
+        
+        button = new Xtk::XtkButtonX11(this, "Clicke Me 点我", 10, 80, 100, 40);
         button->setButtonPressCallback(buttonPress);
-        m_widgets.push_back(button);
+        
+        eventButton = new Xtk::XtkButtonX11(this, 
+                "Click Me then disconnect 点我就断开信号", 10, 130, 400, 40);
+        eventButton->setButtonPressCallback(eventButtonPress, this);
     }
     ~HelloWindowX11() 
     {
@@ -42,15 +46,35 @@ public:
             delete button;
             button = nullptr;
         }
+
+        if (eventButton) {
+            delete eventButton;
+            eventButton = nullptr;
+        }
     }
 
-    std::vector<Xtk::XtkWidgetX11*> widgets() const { return m_widgets; }
+    void setEvent(Xtk::XtkEventX11* event) 
+    {
+        if (m_event == event) 
+            return;
+
+        m_event = event;
+        
+        // TODO: dynamic event connect
+        if (button) 
+            m_event->connect(button);
+        if (eventButton) 
+            m_event->connect(eventButton);
+    }
 
     void draw() 
     {
         this->swap();
         text->draw();
-        button->draw();
+        if (button) 
+            button->draw();
+        if (eventButton) 
+            eventButton->draw();
     }
 
 private:
@@ -62,10 +86,21 @@ private:
         return nullptr;
     }
 
+    static void* eventButtonPress(Xtk::XtkButtonX11* button, void* arg) 
+    {
+        HelloWindowX11* thisPtr = reinterpret_cast<HelloWindowX11*>(arg);
+        std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << button << " " 
+                  << arg << " " << button->text() << std::endl;
+        if (thisPtr->m_event) 
+            thisPtr->m_event->disconnect(button);
+        return nullptr;
+    }
+
 private:
     Xtk::XtkText* text = nullptr;
     Xtk::XtkButtonX11* button = nullptr;
-    std::vector<Xtk::XtkWidgetX11*> m_widgets;
+    Xtk::XtkButtonX11* eventButton = nullptr;
+    Xtk::XtkEventX11* m_event = nullptr;
 };
 
 static void cleanup() 
@@ -120,15 +155,12 @@ int main(int argc, char* argv[])
         cleanup();
         return 1;
     }
-
-    for (unsigned int i = 0; i < parentWindow->widgets().size(); i++) 
-        event->connect(parentWindow->widgets()[i]);
-    
+    parentWindow->setEvent(event);
+    // TODO: static event connect
     event->connect(window);
 
     event->run();
 
-    /* Mr. cleanup */
     cleanup();
 
     return 0;

@@ -17,10 +17,10 @@ sudo make install
 
 - [x] Theme
 - [ ] Theme/oxygen
-- [ ] Event
+- [x] Event
 - [ ] Event/MultiTouch
-- [ ] Event/connect
-- [ ] Event/disconnect
+- [x] Event/connect
+- [x] Event/disconnect
 - [x] Event/ButtonPress
 - [x] Event/EnterNotify
 - [x] Event/LeaveNotify
