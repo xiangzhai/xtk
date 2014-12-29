@@ -13,5 +13,6 @@
 #include <x11/xtkwidget-x11.h>
 #include <x11/xtkwindow-x11.h>
 #include <x11/xtkbutton-x11.h>
+#include <x11/xtkmenu-x11.h>
 
 #endif // XTK_H

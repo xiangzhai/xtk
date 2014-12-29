@@ -34,6 +34,9 @@ public:
         eventButton = new Xtk::XtkButtonX11(this, 
                 "Click Me then disconnect 点我就断开信号", 10, 130, 400, 40);
         eventButton->setButtonPressCallback(eventButtonPress, this);
+    
+        imageButton = new Xtk::XtkButtonX11(this, "START", 10, 500, 40, 40);
+        imageButton->setButtonPressCallback(imageButtonPress, this);
     }
     ~HelloWindowX11() 
     {
@@ -51,6 +54,16 @@ public:
             delete eventButton;
             eventButton = nullptr;
         }
+
+        if (imageButton) {
+            delete imageButton;
+            imageButton = nullptr;
+        }
+    }
+
+    void eventButtonPress() 
+    {
+        std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
     }
 
     void setEvent(Xtk::XtkEventX11* event) 
@@ -63,18 +76,28 @@ public:
         // TODO: dynamic event connect
         if (button) 
             m_event->connect(button);
+        
         if (eventButton) 
             m_event->connect(eventButton);
+    
+        if (imageButton)
+            m_event->connect(imageButton);
     }
 
     void draw() 
     {
         this->swap();
+
         text->draw();
+
         if (button) 
             button->draw();
+
         if (eventButton) 
             eventButton->draw();
+
+        if (imageButton) 
+            imageButton->draw();
     }
 
 private:
@@ -99,10 +122,27 @@ private:
         return nullptr;
     }
 
+    static void* imageButtonPress(Xtk::XtkButtonX11* button, void* arg) 
+    {
+        HelloWindowX11* thisPtr = reinterpret_cast<HelloWindowX11*>(arg);
+        std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << button << " " 
+                  << arg << " " << button->text() << std::endl;
+        // TODO: menu stuff
+        if (thisPtr->menu == nullptr) { 
+            thisPtr->menu = new Xtk::XtkMenuX11(thisPtr, 10, 500, 100, 100);
+            thisPtr->m_event->connect(thisPtr->menu);
+            thisPtr->menu->draw();
+        } else 
+            thisPtr->menu->show();
+        return nullptr;
+    }
+
 private:
     Xtk::XtkText* text = nullptr;
     Xtk::XtkButtonX11* button = nullptr;
     Xtk::XtkButtonX11* eventButton = nullptr;
+    Xtk::XtkButtonX11* imageButton = nullptr;
+    Xtk::XtkMenuX11* menu = nullptr;
     Xtk::XtkEventX11* m_event = nullptr;
 };
 
@@ -158,10 +198,10 @@ int main(int argc, char* argv[])
         cleanup();
         return 1;
     }
+    // TODO: dynamic event connect
     parentWindow->setEvent(event);
     // TODO: static event connect
     event->connect(window);
-
     event->run();
 
     cleanup();

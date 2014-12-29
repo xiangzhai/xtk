@@ -30,6 +30,8 @@ public:
     void minimizeWindow(Window window);
     
     virtual void close() {}
+    virtual void show() {}
+    virtual void hide() {}
     virtual void enterNotify() {}
     virtual void leaveNotify() {}
     virtual void buttonPress() {}

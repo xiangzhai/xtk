@@ -75,6 +75,8 @@ public:
     std::vector<XtkWidgetX11*> widgets() const { return m_widgets; }
 
     void close();
+    void show();
+    void hide();
     void setSize(int width, int height);
     void resize(int width, int height);
     void draw();

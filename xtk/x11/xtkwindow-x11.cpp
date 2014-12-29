@@ -191,6 +191,16 @@ void XtkWindowX11::close()
     }
 }
 
+void XtkWindowX11::show() 
+{
+    XMapWindow(m_display, m_window);
+}
+
+void XtkWindowX11::hide() 
+{
+    XUnmapWindow(m_display, m_window);
+}
+
 void XtkWindowX11::resize(int width, int height) 
 {
     m_width = width;
