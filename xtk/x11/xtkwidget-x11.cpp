@@ -3,6 +3,7 @@
 #include "xtkwidget-x11.h"
 
 #include <iostream>
+#include <string.h>
 
 namespace Xtk 
 {
@@ -58,6 +59,25 @@ void XtkWidgetX11::activateWindow(Window window)
 void XtkWidgetX11::minimizeWindow(Window window) 
 {
     XIconifyWindow(m_display, window, DefaultScreen(m_display));
+}
+
+void XtkWidgetX11::quit(Window parent) 
+{
+#if XTK_DEBUG
+    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
+#endif
+    XClientMessageEvent event;
+    event.type = ClientMessage;
+    event.window = parent;
+    event.message_type = XInternAtom(m_display, "WM_PROTOCOLS", False);
+    event.format = 32;
+    event.data.l[0] = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
+    event.data.l[1] = CurrentTime;
+    XSendEvent(m_display, 
+               parent, 
+               False, 
+               NoEventMask, 
+               reinterpret_cast<XEvent*>(&event));
 }
 
 }

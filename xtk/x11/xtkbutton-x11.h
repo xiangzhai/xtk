@@ -15,6 +15,7 @@ namespace Xtk
 class XtkButtonX11;
 
 typedef void* (*BUTTON_PRESS_CALLBACK)(XtkButtonX11*, void*);
+typedef void* (*RIGHT_BUTTON_PRESS_CALLBACK)(XtkButtonX11*, void*);
 
 class XtkButtonX11 : public XtkWindowX11 
 {
@@ -32,10 +33,13 @@ public:
 
     void setButtonPressCallback(BUTTON_PRESS_CALLBACK buttonPressCallback, 
                                 void* arg = nullptr);
+    void setRightButtonPressCallback(
+            RIGHT_BUTTON_PRESS_CALLBACK rightButtonPressCallback, 
+            void* arg = nullptr);
 
     void enterNotify();
     void leaveNotify();
-    void buttonPress();
+    void buttonPress(XButtonEvent event);
     void setSize(int width, int height);
     void draw();
 
@@ -47,7 +51,9 @@ private:
     XtkText* m_textObj = nullptr;
     cairo_t* context = nullptr;
     BUTTON_PRESS_CALLBACK m_buttonPressCallback = nullptr;
-    void* m_arg = nullptr;
+    RIGHT_BUTTON_PRESS_CALLBACK m_rightButtonPressCallback = nullptr;
+    void* m_buttonPressArg = nullptr;
+    void* m_rightButtonPressArg = nullptr;
 };
 
 };

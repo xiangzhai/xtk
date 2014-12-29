@@ -55,7 +55,15 @@ void XtkButtonX11::setButtonPressCallback(
         void* arg) 
 {
     m_buttonPressCallback = buttonPressCallback;
-    m_arg = arg;
+    m_buttonPressArg = arg;
+}
+
+void XtkButtonX11::setRightButtonPressCallback(
+        RIGHT_BUTTON_PRESS_CALLBACK rightButtonPressCallback, 
+        void* arg) 
+{
+    m_rightButtonPressCallback = rightButtonPressCallback;
+    m_rightButtonPressArg = arg;
 }
 
 void XtkButtonX11::enterNotify() 
@@ -86,13 +94,20 @@ void XtkButtonX11::leaveNotify()
     draw();
 }
 
-void XtkButtonX11::buttonPress() 
+void XtkButtonX11::buttonPress(XButtonEvent event) 
 { 
 #if XTK_DEBUG
-    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
+    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << event.button << std::endl;
 #endif
-    if (m_buttonPressCallback) 
-        m_buttonPressCallback(this, m_arg); 
+    if (event.button == Button1 && m_buttonPressCallback) {
+        m_buttonPressCallback(this, m_buttonPressArg); 
+        return;
+    }
+
+    if (event.button == Button3 && m_rightButtonPressCallback) {
+        m_rightButtonPressCallback(this, m_rightButtonPressArg);
+        return;
+    }
 }
 
 void XtkButtonX11::setText(const std::string & text) 

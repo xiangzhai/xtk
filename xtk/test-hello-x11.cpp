@@ -30,6 +30,7 @@ public:
         
         button = new Xtk::XtkButtonX11(this, "Clicke Me 点我", 10, 80, 100, 40);
         button->setButtonPressCallback(buttonPress);
+        button->setRightButtonPressCallback(rightButtonPress, this);
         
         eventButton = new Xtk::XtkButtonX11(this, 
                 "Click Me then disconnect 点我就断开信号", 10, 130, 400, 40);
@@ -105,7 +106,15 @@ private:
     {
         std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << button << " " 
                   << arg << " " << button->text() << std::endl;
-   
+        return nullptr;
+    }
+
+    static void* rightButtonPress(Xtk::XtkButtonX11* button, void* arg) 
+    {
+        HelloWindowX11* thisPtr = reinterpret_cast<HelloWindowX11*>(arg);
+        std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << button << " " 
+                  << arg << " " << button->text() << std::endl;
+        thisPtr->quit(thisPtr->window());
         return nullptr;
     }
 

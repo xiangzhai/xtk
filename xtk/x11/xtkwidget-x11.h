@@ -28,13 +28,14 @@ public:
                           unsigned long l4 = 0);
     void activateWindow(Window window);
     void minimizeWindow(Window window);
+    void quit(Window parent);
     
     virtual void close() {}
     virtual void show() {}
     virtual void hide() {}
     virtual void enterNotify() {}
     virtual void leaveNotify() {}
-    virtual void buttonPress() {}
+    virtual void buttonPress(XButtonEvent event) {}
     virtual void setSize(int width, int height) {}
     virtual void resize(int width, int height) {}
     virtual void draw() {}

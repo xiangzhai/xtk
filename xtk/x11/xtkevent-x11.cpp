@@ -160,7 +160,7 @@ void XtkEventX11::run()
         if (m_event.type == ButtonPress) {
             for (unsigned int i = 0; i < widgets.size(); i++) {
                 if (widgets[i]->window() == m_event.xbutton.window) {
-                    widgets[i]->buttonPress();
+                    widgets[i]->buttonPress(m_event.xbutton);
                 }
             }
         }
