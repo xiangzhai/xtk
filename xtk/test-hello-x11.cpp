@@ -131,6 +131,13 @@ private:
         return nullptr;
     }
 
+    static void* menuItemCallback(Xtk::XtkMenuItem* item, void* arg) 
+    {
+        char* text = reinterpret_cast<char*>(arg);
+        std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << text << std::endl;
+        return nullptr;
+    }
+
     static void* imageButtonPress(Xtk::XtkButtonX11* button, void* arg) 
     {
         HelloWindowX11* thisPtr = reinterpret_cast<HelloWindowX11*>(arg);
@@ -140,7 +147,9 @@ private:
         if (thisPtr->menu == nullptr) { 
             thisPtr->menu = new Xtk::XtkMenuX11(thisPtr, 10, 500, 200);
             for (int i = 0; i < 6; i++) { 
-                thisPtr->menu->addItem("MENU-ITEM-" + std::to_string(i));
+                std::string text = "MENU-ITEM-" + std::to_string(i);
+                thisPtr->menu->addItem(text, thisPtr->menuItemCallback, 
+                        (void*)text.c_str());
             }
             thisPtr->m_event->connect(thisPtr->menu);
             thisPtr->menu->draw();

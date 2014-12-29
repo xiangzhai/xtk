@@ -36,6 +36,7 @@ public:
     virtual void enterNotify() {}
     virtual void leaveNotify() {}
     virtual void buttonPress(XButtonEvent event) {}
+    virtual void motionNotify(XButtonEvent event) {}
     virtual void setSize(int width, int height) {}
     virtual void resize(int width, int height) {}
     virtual void draw() {}

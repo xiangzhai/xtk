@@ -55,7 +55,8 @@ public:
 
     void enterNotify();
     void leaveNotify();
-    void buttonPress();
+    void buttonPress(XButtonEvent event);
+    void motionNotify(XButtonEvent event);
     void draw();
 
 private:
@@ -63,7 +64,9 @@ private:
     int m_width = 0;
     int m_height = 0;
     cairo_t* context = nullptr;
+    int itemHeight = 30;
     std::vector<XtkMenuItem*> items;
+    int pointerY = -1;
 };
 
 };

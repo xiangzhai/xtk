@@ -164,6 +164,14 @@ void XtkEventX11::run()
                 }
             }
         }
+
+        if (m_event.type == MotionNotify) {
+            for (unsigned int i = 0; i < widgets.size(); i++) {
+                if (widgets[i]->window() == m_event.xbutton.window) {
+                    widgets[i]->motionNotify(m_event.xbutton);
+                }
+            }
+        }
     }
 }
 

@@ -46,8 +46,9 @@ XtkWindowX11::XtkWindowX11(Display* display,
     attr.border_pixel = 0;
     attr.background_pixel = 0;
     attr.event_mask = ExposureMask | PropertyChangeMask | StructureNotifyMask |
-                      ButtonReleaseMask | ButtonPressMask | ButtonMotionMask | 
+                      ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | 
                       EnterWindowMask | LeaveWindowMask | 
+                      PointerMotionMask | 
                       KeyPressMask;
     
     // create window
