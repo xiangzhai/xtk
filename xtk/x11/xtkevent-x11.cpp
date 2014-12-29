@@ -86,7 +86,7 @@ void XtkEventX11::run()
     XDamageQueryExtension(m_display, &damageEventBase, &damageErrorBase);
 
     while (quit == false && !XNextEvent(m_display, &m_event)) {
-        
+        // X.h Event names
         if (m_event.type == ClientMessage) {
             if ((Atom)m_event.xclient.data.l[0] == m_parent->wmDeleteMessage()) {
                 if (m_event.xclient.window == m_parent->window()) {

@@ -35,6 +35,11 @@ XtkWindowX11::XtkWindowX11(Display* display,
     // window attribute
     XSetWindowAttributes attr;
     attr.override_redirect = False;
+    attr.save_under = False;
+    if (type == _NET_WM_WINDOW_TYPE_MENU) {
+        attr.override_redirect = True;
+        attr.save_under = True;
+    }
     attr.colormap = XCreateColormap(m_display, 
                         parent == None ? DefaultRootWindow(m_display) : parent, 
                         vinfo.visual, AllocNone);
@@ -51,8 +56,8 @@ XtkWindowX11::XtkWindowX11(Display* display,
             x, y, m_width, m_height, borderWidth, vinfo.depth, 
             CopyFromParent, /* class */
             m_visual, 
-            CWOverrideRedirect | CWColormap | CWBorderPixel | CWBackPixel | 
-            CWEventMask, 
+            CWOverrideRedirect | CWSaveUnder | CWColormap | CWBorderPixel | 
+            CWBackPixel | CWEventMask, 
             &attr);
 
     // window name

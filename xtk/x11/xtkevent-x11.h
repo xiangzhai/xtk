@@ -49,11 +49,11 @@ private:
     XEvent m_event;
     bool quit = false;
     std::vector<XtkWidgetX11*> widgets;
-    CLIENT_MESSAGE_CALLBACK m_clientMessageCallback;
-    PROPERTY_NOTIFY_CALLBACK m_propertyNotifyCallback;
-    XDAMAGE_NOTIFY_CALLBACK m_xDamageNotifyCallback;
-    DESTROY_NOTIFY_CALLBACK m_destroyNotifyCallback;
-    CONFIGURE_NOTIFY_CALLBACK m_configureNotifyCallback;
+    CLIENT_MESSAGE_CALLBACK m_clientMessageCallback = nullptr;
+    PROPERTY_NOTIFY_CALLBACK m_propertyNotifyCallback = nullptr;
+    XDAMAGE_NOTIFY_CALLBACK m_xDamageNotifyCallback = nullptr;
+    DESTROY_NOTIFY_CALLBACK m_destroyNotifyCallback = nullptr;
+    CONFIGURE_NOTIFY_CALLBACK m_configureNotifyCallback = nullptr;
     void* m_clientMessageArg = nullptr;
     void* m_propertyNotifyArg = nullptr;
     void* m_xDamageNotifyArg = nullptr;
