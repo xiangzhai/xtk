@@ -20,7 +20,9 @@ XtkWindowX11::XtkWindowX11(Display* display,
                            X11WindowType type)
   : XtkWidgetX11(display), 
     m_display(display),
-    m_theme(theme), 
+    m_theme(theme),
+    m_x(x),
+    m_y(y),
     m_width(width), 
     m_height(height),
     m_name(name) 
@@ -54,7 +56,7 @@ XtkWindowX11::XtkWindowX11(Display* display,
     // create window
     m_window = XCreateWindow(m_display, 
             parent == None ? DefaultRootWindow(m_display) : parent, 
-            x, y, m_width, m_height, borderWidth, vinfo.depth, 
+            m_x, m_y, m_width, m_height, borderWidth, vinfo.depth, 
             CopyFromParent, /* class */
             m_visual, 
             CWOverrideRedirect | CWSaveUnder | CWColormap | CWBorderPixel | 

@@ -86,7 +86,7 @@ void XtkMenuX11::buttonPress(XButtonEvent event)
     for (unsigned int i = 0; i < items.size(); i++) {
         if (event.y < int(i + 1) * itemHeight && event.y > (int)i * itemHeight) {
             if (items[i]->menuItemCallback) 
-                items[i]->menuItemCallback(items[i], items[i]->arg);
+                items[i]->menuItemCallback(this, items[i]->arg);
         }
     }
 }

@@ -28,6 +28,7 @@ public:
                           unsigned long l4 = 0);
     void activateWindow(Window window);
     void minimizeWindow(Window window);
+    void closeWindow(Window window);
     void quit(Window parent);
     
     virtual void close() {}

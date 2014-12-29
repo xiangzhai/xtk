@@ -13,9 +13,9 @@
 namespace Xtk 
 {
 
-class XtkMenuItem;
+class XtkMenuX11;
 
-typedef void* (*MENUITEM_CALLBACK)(XtkMenuItem*, void*);
+typedef void* (*MENUITEM_CALLBACK)(XtkMenuX11*, void*);
 
 class XtkMenuItem 
 {

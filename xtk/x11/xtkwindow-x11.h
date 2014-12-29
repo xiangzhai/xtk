@@ -68,6 +68,8 @@ public:
     Window window() const { return m_window; }
     Visual* visual() const { return m_visual; }
     Atom wmDeleteMessage() const { return m_wmDeleteMessage; }
+    int x() const { return m_x; }
+    int y() const { return m_y; }
     int width() const { return m_width; }
     int height() const { return m_height; }
     std::string name() const { return m_name; }
@@ -89,6 +91,8 @@ private:
     Window m_window = None;
     Visual* m_visual = nullptr;
     Atom m_wmDeleteMessage;
+    int m_x = 0;
+    int m_y = 0;
     int m_width = 0;
     int m_height = 0;
     std::string m_name;

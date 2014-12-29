@@ -131,7 +131,7 @@ private:
         return nullptr;
     }
 
-    static void* menuItemCallback(Xtk::XtkMenuItem* item, void* arg) 
+    static void* menuItemCallback(Xtk::XtkMenuX11* menu, void* arg) 
     {
         char* text = reinterpret_cast<char*>(arg);
         std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << text << std::endl;

@@ -61,6 +61,11 @@ void XtkWidgetX11::minimizeWindow(Window window)
     XIconifyWindow(m_display, window, DefaultScreen(m_display));
 }
 
+void XtkWidgetX11::closeWindow(Window window) 
+{
+    sendNETWMMessage(window, "_NET_CLOSE_WINDOW", CurrentTime, 2);
+}
+
 void XtkWidgetX11::quit(Window parent) 
 {
 #if XTK_DEBUG
