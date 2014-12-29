@@ -4,8 +4,6 @@
 #include "xtkutil.h"
 #include "xtktext.h"
 
-#include <iostream>
-
 namespace Xtk 
 {
 
@@ -25,6 +23,7 @@ XtkMenuX11::XtkMenuX11(XtkWindowX11* parent,
                  0, 
                  _NET_WM_WINDOW_TYPE_MENU), 
     m_parent(parent), 
+    m_y(y),
     m_width(width), 
     m_height(height)
 {
@@ -54,12 +53,25 @@ XtkMenuX11::~XtkMenuX11()
 
 void XtkMenuX11::addItem(std::string text, 
                          MENUITEM_CALLBACK menuItemCallback, 
-                         void* arg, 
+                         void* arg,
+                         XtkMenuItem* parent,
                          std::string iconFileName) 
 {
-    m_height += itemHeight;
-    setSize(m_width, m_height);
-    items.push_back(new XtkMenuItem(text, menuItemCallback, arg, iconFileName));
+    if (parent == nullptr) {
+        m_height += itemHeight;
+        setSize(m_width, m_height);
+    }
+    items.push_back(new XtkMenuItem(
+                text, menuItemCallback, arg, parent, iconFileName));
+}
+
+void XtkMenuX11::addItem(XtkMenuItem* item) 
+{
+    if (item->parent() == nullptr) {
+        m_height += itemHeight;
+        setSize(m_width, m_height);
+    }
+    items.push_back(item);
 }
 
 void XtkMenuX11::enterNotify() 
@@ -74,19 +86,30 @@ void XtkMenuX11::leaveNotify()
 #if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
+    /* FIXME: parent menu MUST show
     sleep(1);
-    hide();
+    hide(); */
 }
 
 void XtkMenuX11::buttonPress(XButtonEvent event) 
 { 
+    curLevel = event.x / m_width;
 #if XTK_DEBUG
-    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
+    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << curLevel << std::endl;
 #endif
-    for (unsigned int i = 0; i < items.size(); i++) {
+    for (unsigned int i = 0; i < curItems.size(); i++) {
         if (event.y < int(i + 1) * itemHeight && event.y > (int)i * itemHeight) {
-            if (items[i]->menuItemCallback) 
-                items[i]->menuItemCallback(this, items[i]->arg);
+            if (sub == nullptr) {
+                sub = new XtkMenuX11(m_parent, 
+                    event.x, m_y + event.y, m_width, m_height);
+                sub->draw();
+            } else {
+                delete sub;
+                sub = nullptr;
+            }
+            if (curItems[i]->menuItemCallback()) 
+                curItems[i]->menuItemCallback()(this, curItems[i]->arg());
+            break;
         }
     }
 }
@@ -114,7 +137,17 @@ void XtkMenuX11::draw()
     cairo_rectangle(context, 0, 0, m_width, m_height);
     cairo_stroke_preserve(context);
 
+    curItems.clear();
     for (unsigned int i = 0; i < items.size(); i++) {
+        if (curLevel == 0) {
+            if (items[i]->parent() == nullptr) { 
+                std::cout << items[i]->text() << std::endl;
+                curItems.push_back(items[i]);
+            }
+        }
+    }
+        
+    for (unsigned int i = 0; i < curItems.size(); i++) {
         // hover
         if (pointerY < (int)(i + 1) * itemHeight && 
             pointerY > (int)i * itemHeight) {
@@ -128,7 +161,8 @@ void XtkMenuX11::draw()
             cairo_stroke(context);
         }
         // text
-        XtkText textObj(this->surface(), items[i]->text, 30, y, m_width, itemHeight);
+        XtkText textObj(this->surface(), 
+                curItems[i]->text(), 30, y, m_width, itemHeight);
         textObj.draw();
         // increase
         y += itemHeight;

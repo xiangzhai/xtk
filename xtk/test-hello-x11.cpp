@@ -36,7 +36,7 @@ public:
                 "Click Me then disconnect 点我就断开信号", 10, 130, 400, 40);
         eventButton->setButtonPressCallback(eventButtonPress, this);
     
-        imageButton = new Xtk::XtkButtonX11(this, "START", 10, 500, 40, 40);
+        imageButton = new Xtk::XtkButtonX11(this, "Menu", 10, 500, 40, 40);
         imageButton->setButtonPressCallback(imageButtonPress, this);
     }
     ~HelloWindowX11() 
@@ -147,9 +147,17 @@ private:
         if (thisPtr->menu == nullptr) { 
             thisPtr->menu = new Xtk::XtkMenuX11(thisPtr, 10, 500, 200);
             for (int i = 0; i < 6; i++) { 
-                std::string text = "MENU-ITEM-" + std::to_string(i);
-                thisPtr->menu->addItem(text, thisPtr->menuItemCallback, 
-                        (void*)text.c_str());
+                std::string text = "MENU-ITEM-" + std::to_string(i + 1);
+                Xtk::XtkMenuItem* item = new Xtk::XtkMenuItem(text, 
+                    thisPtr->menuItemCallback, (void*)text.c_str());
+                thisPtr->menu->addItem(item);
+                for (int j = 0; j < 3; j++) {
+                    std::string text = "MENU-SUB-ITEM-" + 
+                        std::to_string(i + 1) + "-" + std::to_string(j + 1);
+                    Xtk::XtkMenuItem* subitem = new Xtk::XtkMenuItem(text, 
+                        thisPtr->menuItemCallback, (void*)text.c_str(), item);
+                    thisPtr->menu->addItem(subitem);
+                }
             }
             thisPtr->m_event->connect(thisPtr->menu);
             thisPtr->menu->draw();
