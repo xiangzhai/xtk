@@ -138,7 +138,10 @@ private:
                   << arg << " " << button->text() << std::endl;
         // TODO: menu stuff
         if (thisPtr->menu == nullptr) { 
-            thisPtr->menu = new Xtk::XtkMenuX11(thisPtr, 10, 500, 100, 100);
+            thisPtr->menu = new Xtk::XtkMenuX11(thisPtr, 10, 500, 200);
+            for (int i = 0; i < 6; i++) { 
+                thisPtr->menu->addItem("MENU-ITEM-" + std::to_string(i));
+            }
             thisPtr->m_event->connect(thisPtr->menu);
             thisPtr->menu->draw();
         } else 

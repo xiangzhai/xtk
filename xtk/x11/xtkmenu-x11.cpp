@@ -2,6 +2,7 @@
 
 #include "xtkmenu-x11.h"
 #include "xtkutil.h"
+#include "xtktext.h"
 
 #include <iostream>
 
@@ -40,13 +41,23 @@ XtkMenuX11::~XtkMenuX11()
 #if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
+    for (unsigned int i = 0; i < items.size(); i++) {
+        if (items[i]) {
+            delete items[i];
+            items[i] = nullptr;
+        }
+    }
+    items.clear();
 }
 
-void XtkMenuX11::setMenuPressCallback(MENU_PRESS_CALLBACK menuPressCallback, 
-                                      void* arg) 
+void XtkMenuX11::addItem(std::string text, 
+                         MENUITEM_CALLBACK menuItemCallback, 
+                         void* arg, 
+                         std::string iconFileName) 
 {
-    m_menuPressCallback = menuPressCallback;
-    m_arg = arg;
+    m_height += this->theme()->getInt("menu", "itemheight", 30);
+    setSize(m_width, m_height);
+    items.push_back(new XtkMenuItem(text, menuItemCallback, arg, iconFileName));
 }
 
 void XtkMenuX11::enterNotify() 
@@ -70,13 +81,13 @@ void XtkMenuX11::buttonPress()
 #if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
-    if (m_menuPressCallback) 
-        m_menuPressCallback(this, m_arg); 
 }
 
 void XtkMenuX11::draw() 
 {
     double r, g, b;
+    int itemHeight = this->theme()->getInt("menu", "itemheight", 30);
+    int y = 0;
 
     this->swap(this->theme()->string("menu", "backgroundcolor", "#ffffff"));
 
@@ -86,6 +97,12 @@ void XtkMenuX11::draw()
     cairo_set_line_width(context, this->theme()->getInt("menu", "borderwidth", 1));
     cairo_rectangle(context, 0, 0, m_width, m_height);
     cairo_stroke_preserve(context);
+
+    for (unsigned int i = 0; i < items.size(); i++) {
+        XtkText textObj(this->surface(), items[i]->text, 30, y, m_width, itemHeight);
+        textObj.draw();
+        y += itemHeight;
+    }
 }
 
 }

@@ -8,13 +8,35 @@
 #include <xtktext.h>
 
 #include <string>
+#include <vector>
 
 namespace Xtk 
 {
 
-class XtkMenuX11;
+class XtkMenuItem;
 
-typedef void* (*MENU_PRESS_CALLBACK)(XtkMenuX11*, void*);
+typedef void* (*MENUITEM_CALLBACK)(XtkMenuItem*, void*);
+
+class XtkMenuItem 
+{
+public:
+    XtkMenuItem(std::string text, 
+                MENUITEM_CALLBACK menuItemCallback = nullptr, 
+                void* arg = nullptr,
+                std::string iconFileName = "") 
+    {
+        this->text = text;
+        this->menuItemCallback = menuItemCallback;
+        this->arg = arg;
+        this->iconFileName = iconFileName;
+    }
+
+public:
+    std::string text = "";
+    MENUITEM_CALLBACK menuItemCallback = nullptr;
+    void* arg = nullptr;
+    std::string iconFileName = "";
+};
 
 class XtkMenuX11 : public XtkWindowX11 
 {
@@ -23,11 +45,13 @@ public:
                int x, 
                int y, 
                int width, 
-               int height);
+               int height = 1);
     ~XtkMenuX11();
 
-    void setMenuPressCallback(MENU_PRESS_CALLBACK menuPressCallback, 
-                              void* arg = nullptr);
+    void addItem(std::string text, 
+                 MENUITEM_CALLBACK menuItemCallback = nullptr, 
+                 void* arg = nullptr, 
+                 std::string iconFileName = "");
 
     void enterNotify();
     void leaveNotify();
@@ -39,8 +63,7 @@ private:
     int m_width = 0;
     int m_height = 0;
     cairo_t* context = nullptr;
-    MENU_PRESS_CALLBACK m_menuPressCallback = nullptr;
-    void* m_arg = nullptr;
+    std::vector<XtkMenuItem*> items;
 };
 
 };
