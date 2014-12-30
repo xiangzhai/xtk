@@ -41,7 +41,6 @@ public:
     virtual void setSize(int width, int height) {}
     virtual void resize(int width, int height) {}
     virtual void draw() {}
-    virtual void swap(double alpha = 1.0) {}
 
 private:
     Display* m_display = nullptr;

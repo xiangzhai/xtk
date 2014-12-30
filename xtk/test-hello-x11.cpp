@@ -150,20 +150,20 @@ private:
             for (int i = 0; i < 6; i++) { 
                 std::string text = "MENU-ITEM-" + std::to_string(i + 1);
                 Xtk::XtkMenuItem* item = new Xtk::XtkMenuItem(text, 
-                    thisPtr->menuItemCallback, (void*)text.c_str());
+                    thisPtr->menuItemCallback);
                 thisPtr->menu->addItem(item);
                 for (int j = 0; j < 4; j++) {
                     std::string text = "MENU-SUB-ITEM-" + 
                         std::to_string(i + 1) + "-" + std::to_string(j + 1);
                     Xtk::XtkMenuItem* subitem = new Xtk::XtkMenuItem(text, 
-                        thisPtr->menuItemCallback, (void*)text.c_str(), item);
+                        thisPtr->menuItemCallback, nullptr, item);
                     thisPtr->menu->addItem(subitem);
                     for (int k = 0; k < 2; k++) {
                         std::string text = "MENU-SUB2-ITEM-" + 
                             std::to_string(i + 1) + "-" + std::to_string(j + 1) + 
                             "-" + std::to_string(k + 1);
                         Xtk::XtkMenuItem* sub2item = new Xtk::XtkMenuItem(text, 
-                                thisPtr->menuItemCallback, (void*)text.c_str(), 
+                                thisPtr->menuItemCallback, nullptr, 
                                 subitem);
                         thisPtr->menu->addItem(sub2item);
                     }
@@ -230,6 +230,7 @@ int main(int argc, char* argv[])
         cleanup();
         return 1;
     }
+    window->setAlpha(0.1);
 
     // event loop
     event = new Xtk::XtkEventX11(display->display(), parentWindow);

@@ -82,7 +82,8 @@ public:
     void setSize(int width, int height);
     void resize(int width, int height);
     void draw();
-    void swap(std::string color = "", double alpha = 1.0);
+    void setAlpha(double alpha);
+    void swap(std::string color = "");
 
 private:
     Display* m_display = nullptr;
@@ -99,6 +100,7 @@ private:
     cairo_surface_t* m_surface = nullptr;
     cairo_t* context = nullptr;
     std::vector<XtkWidgetX11*> m_widgets;
+    double m_alpha = 1.0;
 };
 
 };

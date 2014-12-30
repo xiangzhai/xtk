@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
     }
 
     // window
-    window = new Xtk::XtkWindowX11(display->display(), theme, 0, 0, 300, 200);
+    window = new Xtk::XtkWindowX11(display->display(), theme, 0, 0, 400, 300);
     if (window == nullptr) {
         cleanup();
         return 1;
@@ -62,7 +62,6 @@ int main(int argc, char* argv[])
     }
     event->run();
 
-    /* Mr. cleanup */
     cleanup();
 
     return 0;

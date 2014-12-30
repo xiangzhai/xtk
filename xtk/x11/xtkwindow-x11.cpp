@@ -214,7 +214,16 @@ void XtkWindowX11::resize(int width, int height)
 
 void XtkWindowX11::draw() { this->swap(); }
 
-void XtkWindowX11::swap(std::string color, double alpha) 
+void XtkWindowX11::setAlpha(double alpha) 
+{
+    if (m_alpha == alpha) 
+        return;
+
+    m_alpha = alpha;
+    swap();
+}
+
+void XtkWindowX11::swap(std::string color) 
 {
     double r, g, b;
 
@@ -224,7 +233,7 @@ void XtkWindowX11::swap(std::string color, double alpha)
                   color), 
         r, g, b);
     cairo_save(context);
-    cairo_set_source_rgba(context, r, g, b, alpha);
+    cairo_set_source_rgba(context, r, g, b, m_alpha);
     cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
     cairo_paint(context);
     cairo_restore(context);

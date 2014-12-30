@@ -108,23 +108,41 @@ void XtkMenuX11::leaveNotify()
 void XtkMenuX11::buttonPress(XButtonEvent event) 
 { 
     for (unsigned int i = 0; i < curItems.size(); i++) {
-        if (event.y < int(i + 1) * itemHeight && event.y > (int)i * itemHeight) {
-            if (sub == nullptr) {
-                sub = new XtkMenuX11(m_parent, 
-                    m_x + m_width, m_y + event.y, m_width, curItems[i]);
-                sub->setEvent(m_event);
-                if (m_event) 
-                    m_event->connect(sub);
-                sub->addItems(m_items);
-                sub->draw();
-            } else {
-                if (m_event)
-                    m_event->disconnect(sub);
-                delete sub;
-                sub = nullptr;
+        if (event.y < int(i + 1) * itemHeight && 
+            event.y > (int)i * itemHeight) {
+            XtkMenuItem* parentItem = curItems[i];
+            bool hasChildren = false;
+
+            for (unsigned int i = 0; i < m_items.size(); i++) {
+                if (m_items[i]->parent() == parentItem) {
+                    hasChildren = true;
+                    break;
+                }
             }
-            if (curItems[i]->menuItemCallback()) 
-                curItems[i]->menuItemCallback()(this, curItems[i]->arg());
+            if (hasChildren) {
+                if (sub == nullptr) {
+                    sub = new XtkMenuX11(m_parent, 
+                        m_x + m_width, m_y + event.y, m_width, parentItem);
+                    sub->setEvent(m_event);
+                    if (m_event) 
+                        m_event->connect(sub);
+                    sub->addItems(m_items);
+                    sub->draw();
+                } else {
+                    if (m_event)
+                        m_event->disconnect(sub);
+                    // FIXME: close ALL child menus
+                    sub->close();
+                    sub = nullptr;
+                }
+            } else {
+                // TODO: click the leaf node, close ALL menus
+            }
+
+#if 0
+            if (parentItem->menuItemCallback()) 
+                parentItem->menuItemCallback()(this, parentItem->arg());
+#endif
             break;
         }
     }
@@ -132,11 +150,6 @@ void XtkMenuX11::buttonPress(XButtonEvent event)
 
 void XtkMenuX11::motionNotify(XButtonEvent event) 
 {
-#if XTK_DEBUG
-    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << event.y << std::endl;
-#endif
-    pointerY = event.y;
-    draw();
 }
 
 void XtkMenuX11::draw() 
@@ -155,13 +168,13 @@ void XtkMenuX11::draw()
 
     curItems.clear();
     for (unsigned int i = 0; i < m_items.size(); i++) {
-        if (m_items[i]->parent() == m_parentItem) { 
-            std::cout << m_items[i]->text() << std::endl;
+        if (m_items[i]->parent() == m_parentItem)  
             curItems.push_back(m_items[i]);
-        }
     }
         
     for (unsigned int i = 0; i < curItems.size(); i++) {
+        // FIXME: hover is LOW efficiency ;(
+#if 0
         // hover
         if (pointerY < (int)(i + 1) * itemHeight && 
             pointerY > (int)i * itemHeight) {
@@ -174,6 +187,7 @@ void XtkMenuX11::draw()
             cairo_rectangle(context, 0, i * itemHeight, m_width, itemHeight);
             cairo_stroke(context);
         }
+#endif
         // text
         XtkText textObj(this->surface(), 
                 curItems[i]->text(), 30, y, m_width, itemHeight);

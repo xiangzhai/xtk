@@ -1,7 +1,7 @@
 xtk
 ===
 
-eXtremely difficult to use Tool Kit 翔工具箱
+eXtremely NOT easy ~~difficult~~ to use Tool Kit.
 
 
 ## Build && Install
@@ -10,6 +10,14 @@ eXtremely difficult to use Tool Kit 翔工具箱
 ./autogen.sh --prefix=/usr --enable-debug=yes
 make
 sudo make install
+```
+
+
+## Testcase
+
+```
+./xtk/test-window-x11
+./xtk/test-hello-x11
 ```
 
 
