@@ -105,6 +105,11 @@ void XtkMenuX11::leaveNotify()
 {
 }
 
+void XtkMenuX11::setChild(XtkMenuX11* child) 
+{
+    m_child = child;
+}
+
 void XtkMenuX11::buttonPress(XButtonEvent event) 
 { 
     for (unsigned int i = 0; i < curItems.size(); i++) {
@@ -127,12 +132,16 @@ void XtkMenuX11::buttonPress(XButtonEvent event)
                     if (m_event) 
                         m_event->disconnect(sub);
 
+                    if (sub->child()) 
+                        sub->child()->close();
+
                     sub->close();
                     sub = nullptr;
                 }
                 
-                sub = new XtkMenuX11(m_parent, 
+                sub = new XtkMenuX11(this, 
                         m_x + m_width, m_y + event.y, m_width, curItem);
+                this->setChild(sub);
                 sub->setEvent(m_event);
                 if (m_event) 
                     m_event->connect(sub);

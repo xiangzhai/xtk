@@ -63,6 +63,9 @@ public:
                int height = 1);
     ~XtkMenuX11();
 
+    XtkMenuX11* child() { return m_child; }
+    void setChild(XtkMenuX11* child);
+
     void setEvent(XtkEventX11* event);
     void addItem(std::string text, 
                  MENUITEM_CALLBACK menuItemCallback = nullptr, 
@@ -93,6 +96,7 @@ private:
     int pointerY = -1;
     std::vector<XtkMenuItem*> curItems;
     XtkMenuX11* sub = nullptr;
+    XtkMenuX11* m_child = nullptr;
     XtkMenuItem* curItem = nullptr;
 };
 
