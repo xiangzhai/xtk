@@ -10,7 +10,8 @@ namespace Xtk
 XtkMenuX11::XtkMenuX11(XtkWindowX11* parent, 
                        int x, 
                        int y, 
-                       int width, 
+                       int width,
+                       XtkMenuItem* parentItem, 
                        int height) 
   : XtkWindowX11(parent->display(),
                  parent->theme(), 
@@ -21,10 +22,12 @@ XtkMenuX11::XtkMenuX11(XtkWindowX11* parent,
                  "xtkmenu-x11", 
                  None, 
                  0, 
-                 _NET_WM_WINDOW_TYPE_POPUP_MENU), 
+                 _NET_WM_WINDOW_TYPE_MENU), 
     m_parent(parent), 
+    m_x(x),
     m_y(y),
     m_width(width), 
+    m_parentItem(parentItem),
     m_height(height)
 {
 #if XTK_DEBUG
@@ -43,13 +46,13 @@ XtkMenuX11::~XtkMenuX11()
 #if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
-    for (unsigned int i = 0; i < items.size(); i++) {
-        if (items[i]) {
-            delete items[i];
-            items[i] = nullptr;
+    for (unsigned int i = 0; i < m_items.size(); i++) {
+        if (m_items[i]) {
+            delete m_items[i];
+            m_items[i] = nullptr;
         }
     }
-    items.clear();
+    m_items.clear();
 }
 
 void XtkMenuX11::addItem(std::string text, 
@@ -58,21 +61,32 @@ void XtkMenuX11::addItem(std::string text,
                          XtkMenuItem* parent,
                          std::string iconFileName) 
 {
-    if (parent == nullptr) {
+    if (parent == m_parentItem) {
         m_height += itemHeight;
         setSize(m_width, m_height);
     }
-    items.push_back(new XtkMenuItem(
+    m_items.push_back(new XtkMenuItem(
                 text, menuItemCallback, arg, parent, iconFileName));
 }
 
 void XtkMenuX11::addItem(XtkMenuItem* item) 
 {
-    if (item->parent() == nullptr) {
+    if (item->parent() == m_parentItem) {
         m_height += itemHeight;
         setSize(m_width, m_height);
     }
-    items.push_back(item);
+    m_items.push_back(item);
+}
+
+void XtkMenuX11::addItems(std::vector<XtkMenuItem*> items) 
+{
+    for (unsigned int i = 0; i < items.size(); i++) {
+        if (items[i]->parent() == m_parentItem) {
+            m_height += itemHeight;
+            setSize(m_width, m_height);
+        }
+        m_items.push_back(items[i]);
+    }
 }
 
 void XtkMenuX11::enterNotify() 
@@ -85,22 +99,21 @@ void XtkMenuX11::leaveNotify()
 
 void XtkMenuX11::buttonPress(XButtonEvent event) 
 { 
-    curLevel = event.x / m_width;
-#if XTK_DEBUG
-    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << curLevel << std::endl;
-#endif
     for (unsigned int i = 0; i < curItems.size(); i++) {
         if (event.y < int(i + 1) * itemHeight && event.y > (int)i * itemHeight) {
-            /* FIXME: sub-menu
             if (sub == nullptr) {
                 sub = new XtkMenuX11(m_parent, 
-                    event.x, m_y + event.y, m_width, m_height);
+                    m_x + m_width, m_y + event.y, m_width, curItems[i]);
+                if (m_parent->event()) 
+                    m_parent->event()->connect(sub);
+                sub->addItems(m_items);
                 sub->draw();
             } else {
+                if (m_parent->event())
+                    m_parent->event()->disconnect(sub);
                 delete sub;
                 sub = nullptr;
             }
-            */
             if (curItems[i]->menuItemCallback()) 
                 curItems[i]->menuItemCallback()(this, curItems[i]->arg());
             break;
@@ -132,12 +145,10 @@ void XtkMenuX11::draw()
     cairo_stroke_preserve(context);
 
     curItems.clear();
-    for (unsigned int i = 0; i < items.size(); i++) {
-        if (curLevel == 0) {
-            if (items[i]->parent() == nullptr) { 
-                std::cout << items[i]->text() << std::endl;
-                curItems.push_back(items[i]);
-            }
+    for (unsigned int i = 0; i < m_items.size(); i++) {
+        if (m_items[i]->parent() == m_parentItem) { 
+            std::cout << m_items[i]->text() << std::endl;
+            curItems.push_back(m_items[i]);
         }
     }
         

@@ -58,6 +58,7 @@ public:
                int x, 
                int y, 
                int width, 
+               XtkMenuItem* parentItem = nullptr,
                int height = 1);
     ~XtkMenuX11();
 
@@ -67,6 +68,8 @@ public:
                  XtkMenuItem* parent = nullptr,
                  std::string iconFileName = "");
     void addItem(XtkMenuItem* item);
+    
+    void addItems(std::vector<XtkMenuItem*> items);
 
     void enterNotify();
     void leaveNotify();
@@ -77,14 +80,15 @@ public:
 
 private:
     XtkWindowX11* m_parent = nullptr;
+    int m_x = 0;
     int m_y = 0;
     int m_width = 0;
+    XtkMenuItem* m_parentItem = nullptr;
     int m_height = 0;
     cairo_t* context = nullptr;
     int itemHeight = 30;
-    std::vector<XtkMenuItem*> items;
+    std::vector<XtkMenuItem*> m_items;
     int pointerY = -1;
-    int curLevel = 0;
     std::vector<XtkMenuItem*> curItems;
     XtkMenuX11* sub = nullptr;
 };

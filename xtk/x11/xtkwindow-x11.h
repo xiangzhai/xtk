@@ -21,7 +21,7 @@ namespace Xtk
 typedef enum {                                                                     
     _NET_WM_WINDOW_TYPE_NORMAL,                                                    
     _NET_WM_WINDOW_TYPE_DIALOG,                                                    
-    _NET_WM_WINDOW_TYPE_POPUP_MENU,
+    _NET_WM_WINDOW_TYPE_MENU,
     _NET_WM_WINDOW_TYPE_DOCK,                                                      
     _NET_WM_WINDOW_TYPE_DESKTOP,                                                   
     _NET_WM_WINDOW_TYPE_FRAMELESS                                                  

@@ -39,7 +39,7 @@ XtkWindowX11::XtkWindowX11(Display* display,
     attr.override_redirect = False;
     attr.save_under = False;
     // http://xopendisplay.hilltopia.ca/2009/Mar/Xlib-tutorial-part-11----Menus.html
-    if (type == _NET_WM_WINDOW_TYPE_POPUP_MENU) {
+    if (type == _NET_WM_WINDOW_TYPE_MENU) {
         attr.override_redirect = True;
         attr.save_under = True;
     }
@@ -73,21 +73,7 @@ XtkWindowX11::XtkWindowX11(Display* display,
     m_wmDeleteMessage = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
     XSetWMProtocols(m_display, m_window, &m_wmDeleteMessage, 1);
 
-    if (type == _NET_WM_WINDOW_TYPE_POPUP_MENU) {
-        Atom type, state[2];
-
-        type = XInternAtom(m_display, "_NET_WM_WINDOW_TYPE_POPUP_MENU", False);
-        XChangeProperty(m_display, m_window,
-                        XInternAtom(m_display, "_NET_WM_WINDOW_TYPE", False),
-                        XA_ATOM, 32, PropModeReplace, (unsigned char*) &type, 1);
-    
-        state[0] = XInternAtom(m_display, "_NET_WM_STATE_ABOVE", False);
-        state[1] = XInternAtom(m_display, "_NET_WM_STATE_FOCUSED", False);
-        XChangeProperty(m_display, m_window,                                       
-                        XInternAtom(display, "_NET_WM_STATE", False),              
-                        XA_ATOM, 32, PropModeReplace,                              
-                        (unsigned char*) state, 2);
-    } else if (type == _NET_WM_WINDOW_TYPE_FRAMELESS) {
+    if (type == _NET_WM_WINDOW_TYPE_FRAMELESS) {
         Atom mwmHintsProperty = XInternAtom(m_display, "_MOTIF_WM_HINTS", False);
         struct MwmHints hints;
 
