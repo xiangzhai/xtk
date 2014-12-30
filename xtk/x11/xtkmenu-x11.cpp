@@ -21,14 +21,15 @@ XtkMenuX11::XtkMenuX11(XtkWindowX11* parent,
                  "xtkmenu-x11", 
                  None, 
                  0, 
-                 _NET_WM_WINDOW_TYPE_MENU), 
+                 _NET_WM_WINDOW_TYPE_POPUP_MENU), 
     m_parent(parent), 
     m_y(y),
     m_width(width), 
     m_height(height)
 {
 #if XTK_DEBUG
-    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
+    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << this->window() 
+              << std::endl;
 #endif
     context = cairo_create(this->surface());
     if (context == nullptr) 
@@ -76,19 +77,10 @@ void XtkMenuX11::addItem(XtkMenuItem* item)
 
 void XtkMenuX11::enterNotify() 
 {
-#if XTK_DEBUG
-    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
-#endif
 }
 
 void XtkMenuX11::leaveNotify() 
 {
-#if XTK_DEBUG
-    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
-#endif
-    /* FIXME: parent menu MUST show
-    sleep(1);
-    hide(); */
 }
 
 void XtkMenuX11::buttonPress(XButtonEvent event) 
@@ -99,6 +91,7 @@ void XtkMenuX11::buttonPress(XButtonEvent event)
 #endif
     for (unsigned int i = 0; i < curItems.size(); i++) {
         if (event.y < int(i + 1) * itemHeight && event.y > (int)i * itemHeight) {
+            /* FIXME: sub-menu
             if (sub == nullptr) {
                 sub = new XtkMenuX11(m_parent, 
                     event.x, m_y + event.y, m_width, m_height);
@@ -107,6 +100,7 @@ void XtkMenuX11::buttonPress(XButtonEvent event)
                 delete sub;
                 sub = nullptr;
             }
+            */
             if (curItems[i]->menuItemCallback()) 
                 curItems[i]->menuItemCallback()(this, curItems[i]->arg());
             break;

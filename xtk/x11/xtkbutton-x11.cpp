@@ -29,7 +29,8 @@ XtkButtonX11::XtkButtonX11(XtkWindowX11* parent,
     m_height(height)
 {
 #if XTK_DEBUG
-    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
+    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << this->window() 
+              << std::endl;
 #endif
     m_textObj = new XtkText(this->surface(), m_text, 
             0, 0, m_width, m_height, 12, "#000000", MIDDLE_CENTER);

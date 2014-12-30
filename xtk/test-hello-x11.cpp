@@ -22,8 +22,8 @@ public:
                           height, 
                           "hello-world") 
     {
-        std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
-        
+        std::cout << "DEBUG: " << __PRETTY_FUNCTION__  << " " << this->window() 
+                  << std::endl;
         text = new Xtk::XtkText(this->surface(), "Hello world 你好世界", 
                 10, 0, 400, 80, 25);
         text->setFamily(this->theme()->string("font", "family", "Serif"));

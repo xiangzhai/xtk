@@ -72,6 +72,7 @@ public:
     void leaveNotify();
     void buttonPress(XButtonEvent event);
     void motionNotify(XButtonEvent event);
+    void focusOut();
     void draw();
 
 private:
