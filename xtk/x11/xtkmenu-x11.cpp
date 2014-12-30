@@ -110,31 +110,35 @@ void XtkMenuX11::buttonPress(XButtonEvent event)
     for (unsigned int i = 0; i < curItems.size(); i++) {
         if (event.y < int(i + 1) * itemHeight && 
             event.y > (int)i * itemHeight) {
-            XtkMenuItem* parentItem = curItems[i];
+            if (curItem == curItems[i]) 
+                return;
+
+            curItem = curItems[i];
             bool hasChildren = false;
 
             for (unsigned int i = 0; i < m_items.size(); i++) {
-                if (m_items[i]->parent() == parentItem) {
+                if (m_items[i]->parent() == curItem) {
                     hasChildren = true;
                     break;
                 }
             }
             if (hasChildren) {
-                if (sub == nullptr) {
-                    sub = new XtkMenuX11(m_parent, 
-                        m_x + m_width, m_y + event.y, m_width, parentItem);
-                    sub->setEvent(m_event);
+                if (sub != nullptr) {
                     if (m_event) 
-                        m_event->connect(sub);
-                    sub->addItems(m_items);
-                    sub->draw();
-                } else {
-                    if (m_event)
                         m_event->disconnect(sub);
-                    // FIXME: close ALL child menus
+
                     sub->close();
                     sub = nullptr;
                 }
+                
+                sub = new XtkMenuX11(m_parent, 
+                        m_x + m_width, m_y + event.y, m_width, curItem);
+                sub->setEvent(m_event);
+                if (m_event) 
+                    m_event->connect(sub);
+
+                sub->addItems(m_items);
+                sub->draw();
             } else {
                 // TODO: click the leaf node, close ALL menus
             }

@@ -93,6 +93,7 @@ private:
     int pointerY = -1;
     std::vector<XtkMenuItem*> curItems;
     XtkMenuX11* sub = nullptr;
+    XtkMenuItem* curItem = nullptr;
 };
 
 };
