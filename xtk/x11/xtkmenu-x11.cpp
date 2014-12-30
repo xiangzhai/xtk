@@ -55,6 +55,14 @@ XtkMenuX11::~XtkMenuX11()
     m_items.clear();
 }
 
+void XtkMenuX11::setEvent(XtkEventX11* event) 
+{
+    if (m_event == event) 
+        return;
+
+    m_event = event;
+}
+
 void XtkMenuX11::addItem(std::string text, 
                          MENUITEM_CALLBACK menuItemCallback, 
                          void* arg,
@@ -104,13 +112,14 @@ void XtkMenuX11::buttonPress(XButtonEvent event)
             if (sub == nullptr) {
                 sub = new XtkMenuX11(m_parent, 
                     m_x + m_width, m_y + event.y, m_width, curItems[i]);
-                if (m_parent->event()) 
-                    m_parent->event()->connect(sub);
+                sub->setEvent(m_event);
+                if (m_event) 
+                    m_event->connect(sub);
                 sub->addItems(m_items);
                 sub->draw();
             } else {
-                if (m_parent->event())
-                    m_parent->event()->disconnect(sub);
+                if (m_event)
+                    m_event->disconnect(sub);
                 delete sub;
                 sub = nullptr;
             }

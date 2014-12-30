@@ -4,6 +4,7 @@
 #define XTK_MENU_X11_H
 
 #include <x11/xtkwindow-x11.h>
+#include <x11/xtkevent-x11.h>
 #include <cairo.h>
 #include <xtktext.h>
 
@@ -62,13 +63,13 @@ public:
                int height = 1);
     ~XtkMenuX11();
 
+    void setEvent(XtkEventX11* event);
     void addItem(std::string text, 
                  MENUITEM_CALLBACK menuItemCallback = nullptr, 
                  void* arg = nullptr,
                  XtkMenuItem* parent = nullptr,
                  std::string iconFileName = "");
     void addItem(XtkMenuItem* item);
-    
     void addItems(std::vector<XtkMenuItem*> items);
 
     void enterNotify();
@@ -86,6 +87,7 @@ private:
     XtkMenuItem* m_parentItem = nullptr;
     int m_height = 0;
     cairo_t* context = nullptr;
+    XtkEventX11* m_event = nullptr;
     int itemHeight = 30;
     std::vector<XtkMenuItem*> m_items;
     int pointerY = -1;
