@@ -196,6 +196,17 @@ void XtkMenuX11::m_walkChildMenu(int y)
 
 void XtkMenuX11::buttonPress(XButtonEvent event) 
 {
+#if XTK_DEBUG
+    std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << event.x_root << " " 
+              << this->x() << " " << this->x() + this->width() << " " << event.y_root 
+              << " " << this->y() << " " << this->y() + this->height() << std::endl;
+#endif
+    if (event.x_root > this->x() + this->width() || event.x_root < this->x() || 
+        event.y_root > this->y() + this->height() || event.y_root < this->y()) { 
+        m_closeParentMenu(this);
+        return;
+    }
+    
     for (unsigned int i = 0; i < m_curItems.size(); i++) {
         if (event.y < int(i + 1) * m_itemHeight && 
             event.y > (int)i * m_itemHeight) {
