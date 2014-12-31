@@ -87,6 +87,7 @@ public:
     void draw();
 
 private:
+    void m_closeChildMenu(XtkMenuX11* menu);
     void m_closeParentMenu(XtkMenuX11* menu);
     void m_walkChildMenu(int y = 0);
 

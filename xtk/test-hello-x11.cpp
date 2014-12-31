@@ -38,6 +38,9 @@ public:
     
         imageButton = new Xtk::XtkButtonX11(this, "Menu", 10, 500, 40, 40);
         imageButton->setButtonPressCallback(imageButtonPress, this);
+    
+        menuButton = new Xtk::XtkButtonX11(this, "Menu2", 60, 500, 40, 40);
+        menuButton->setButtonPressCallback(menuButtonPress, this);
     }
     ~HelloWindowX11() 
     {
@@ -59,6 +62,11 @@ public:
         if (imageButton) {
             delete imageButton;
             imageButton = nullptr;
+        }
+
+        if (menuButton) {
+            delete menuButton;
+            menuButton = nullptr;
         }
     }
 
@@ -83,6 +91,9 @@ public:
     
         if (imageButton)
             m_event->connect(imageButton);
+
+        if (menuButton)
+            m_event->connect(menuButton);
     }
 
     void draw() 
@@ -99,6 +110,9 @@ public:
 
         if (imageButton) 
             imageButton->draw();
+
+        if (menuButton)
+            menuButton->draw();
     }
 
 private:
@@ -143,20 +157,19 @@ private:
         HelloWindowX11* thisPtr = reinterpret_cast<HelloWindowX11*>(arg);
         std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << button << " " 
                   << arg << " " << button->text() << std::endl;
-        
-        thisPtr->menu = new Xtk::XtkMenuX11(thisPtr, 10, 500, 200);
-        thisPtr->menu->setEvent(thisPtr->m_event);
+        thisPtr->menu1 = new Xtk::XtkMenuX11(thisPtr, 10, 500, 200);
+        thisPtr->menu1->setEvent(thisPtr->m_event);
         for (int i = 0; i < 8; i++) { 
             std::string text = "MENU-ITEM-" + std::to_string(i + 1);
             Xtk::XtkMenuItem* item = new Xtk::XtkMenuItem(text, 
                     thisPtr->menuItemCallback, (void*)text.c_str());
-            thisPtr->menu->addItem(item);
+            thisPtr->menu1->addItem(item);
             for (int j = 0; j < 6; j++) {
                 std::string text = "MENU-SUB1-ITEM-" + 
                     std::to_string(i + 1) + "-" + std::to_string(j + 1);
                 Xtk::XtkMenuItem* sub1item = new Xtk::XtkMenuItem(text, 
                         thisPtr->menuItemCallback, (void*)text.c_str(), item);
-                thisPtr->menu->addItem(sub1item);
+                thisPtr->menu1->addItem(sub1item);
                 for (int k = 0; k < 4; k++) {
                     std::string text = "MENU-SUB2-ITEM-" + 
                         std::to_string(i + 1) + "-" + std::to_string(j + 1) + 
@@ -164,7 +177,7 @@ private:
                     Xtk::XtkMenuItem* sub2item = new Xtk::XtkMenuItem(text, 
                             thisPtr->menuItemCallback, (void*)text.c_str(), 
                             sub1item);
-                    thisPtr->menu->addItem(sub2item);
+                    thisPtr->menu1->addItem(sub2item);
                     for (int l = 0; l < 2; l++) {
                         std::string text = "MENU-SUB3-ITEM-" + 
                             std::to_string(i + 1) + "-" + 
@@ -174,13 +187,27 @@ private:
                         Xtk::XtkMenuItem* sub3item = new Xtk::XtkMenuItem(
                                 text, thisPtr->menuItemCallback, 
                                 (void*)text.c_str(), sub2item);
-                        thisPtr->menu->addItem(sub3item);
+                        thisPtr->menu1->addItem(sub3item);
                     }
                 }
             }
         }
-        thisPtr->m_event->connect(thisPtr->menu);
-        thisPtr->menu->draw();
+        thisPtr->m_event->connect(thisPtr->menu1);
+        thisPtr->menu1->draw();
+        return nullptr;
+    }
+
+    static void* menuButtonPress(Xtk::XtkButtonX11* button, void* arg) 
+    {
+        HelloWindowX11* thisPtr = reinterpret_cast<HelloWindowX11*>(arg);
+        std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << button << " " 
+                  << arg << " " << button->text() << std::endl;
+        thisPtr->menu2 = new Xtk::XtkMenuX11(thisPtr, 60, 500, 100);
+        std::string text = "Close";
+        thisPtr->menu2->addItem(text, thisPtr->menuItemCallback, (void*)text.c_str());
+        thisPtr->menu2->setEvent(thisPtr->m_event);
+        thisPtr->m_event->connect(thisPtr->menu2);
+        thisPtr->menu2->draw();
         return nullptr;
     }
 
@@ -189,7 +216,9 @@ private:
     Xtk::XtkButtonX11* button = nullptr;
     Xtk::XtkButtonX11* eventButton = nullptr;
     Xtk::XtkButtonX11* imageButton = nullptr;
-    Xtk::XtkMenuX11* menu = nullptr;
+    Xtk::XtkButtonX11* menuButton = nullptr;
+    Xtk::XtkMenuX11* menu1 = nullptr;
+    Xtk::XtkMenuX11* menu2 = nullptr;
     Xtk::XtkEventX11* m_event = nullptr;
 };
 

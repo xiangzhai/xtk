@@ -24,7 +24,7 @@ XtkMenuX11::XtkMenuX11(XtkWindowX11* parent,
                  None, 
                  0, 
                  _NET_WM_WINDOW_TYPE_MENU), 
-    m_parent((XtkMenuX11*)parent), 
+    m_parent(parent), 
     m_x(x),
     m_y(y),
     m_width(width), 
@@ -104,6 +104,21 @@ void XtkMenuX11::setChildMenu(XtkMenuX11* childMenu)
     m_childMenu = childMenu;
 }
 
+void XtkMenuX11::m_closeChildMenu(XtkMenuX11* menu) 
+{
+    XtkMenuX11* child = nullptr;
+
+    if (menu == nullptr)
+        return;
+
+    child = menu->childMenu();
+    if (child) {
+        delete child;
+        child = nullptr;
+    }
+    m_closeChildMenu(menu->childMenu());
+}
+
 void XtkMenuX11::m_closeParentMenu(XtkMenuX11* menu) 
 {
     XtkMenuX11* child = nullptr;
@@ -134,7 +149,6 @@ void XtkMenuX11::m_closeParentMenu(XtkMenuX11* menu)
 void XtkMenuX11::m_walkChildMenu(int y) 
 {
     bool hasChildren = false;
-    XtkMenuX11* child = nullptr;
     
     for (unsigned int i = 0; i < m_items.size(); i++) {
         if (m_items[i]->parent() == m_curItem) {
@@ -147,12 +161,7 @@ void XtkMenuX11::m_walkChildMenu(int y)
         if (m_subMenu) {
             if (m_event) 
                 m_event->disconnect(m_subMenu);
-            // close child menu
-            child = m_subMenu->childMenu();
-            if (child) {
-                delete child;
-                child = nullptr;
-            }
+            m_closeChildMenu(m_subMenu);
             delete m_subMenu;
             m_subMenu = nullptr;
         }
@@ -179,7 +188,6 @@ void XtkMenuX11::m_walkChildMenu(int y)
 
 void XtkMenuX11::buttonPress(XButtonEvent event) 
 {
-    std::cout << "DEBUG: " << __PRETTY_FUNCTION__  << std::endl;
     for (unsigned int i = 0; i < m_curItems.size(); i++) {
         if (event.y < int(i + 1) * m_itemHeight && 
             event.y > (int)i * m_itemHeight) {
