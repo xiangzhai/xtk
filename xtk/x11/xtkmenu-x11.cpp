@@ -185,10 +185,10 @@ void XtkMenuX11::buttonPress(XButtonEvent event)
             event.y > (int)i * m_itemHeight) {
             m_isMotionNotify = false;
             m_curItem = m_curItems[i];
-#if 0
+            
             if (m_curItem->menuItemCallback())
                 m_curItem->menuItemCallback()(this, m_curItem->arg());
-#endif
+            
             m_walkChildMenu(m_y + event.y);
             
             break;
