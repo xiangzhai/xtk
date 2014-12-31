@@ -131,54 +131,65 @@ void XtkMenuX11::m_closeParentMenu(XtkMenuX11* menu)
     m_closeParentMenu(menu->parentMenu());
 }
 
+void XtkMenuX11::m_walkChildMenu(int y) 
+{
+    bool hasChildren = false;
+    XtkMenuX11* child = nullptr;
+    
+    for (unsigned int i = 0; i < m_items.size(); i++) {
+        if (m_items[i]->parent() == m_curItem) {
+            hasChildren = true;
+            break;
+        }
+    }
+
+    if (hasChildren) {
+        if (m_subMenu) {
+            if (m_event) 
+                m_event->disconnect(m_subMenu);
+            // close child menu
+            child = m_subMenu->childMenu();
+            if (child) {
+                delete child;
+                child = nullptr;
+            }
+            delete m_subMenu;
+            m_subMenu = nullptr;
+        }
+        
+        // TODO: menu`s position (y) needs to adjust base on its height
+        // and what if width is changable?
+        m_subMenu = new XtkMenuX11(this, // parent widget
+                                   m_x + m_width, 
+                                   y, 
+                                   m_width, 
+                                   this, // parent menu 
+                                   m_curItem); // parent (menu) item
+        this->setChildMenu(m_subMenu);
+        m_subMenu->setEvent(m_event);
+        if (m_event) 
+            m_event->connect(m_subMenu);
+        m_subMenu->addItems(m_items);
+        m_subMenu->draw();
+    } else { 
+        if (!m_isMotionNotify)
+            m_closeParentMenu(this);
+    }
+}
+
 void XtkMenuX11::buttonPress(XButtonEvent event) 
 {
+    std::cout << "DEBUG: " << __PRETTY_FUNCTION__  << std::endl;
     for (unsigned int i = 0; i < m_curItems.size(); i++) {
         if (event.y < int(i + 1) * m_itemHeight && 
             event.y > (int)i * m_itemHeight) {
-            bool hasChildren = false;
-            
-            if (m_curItem == m_curItems[i])
-                return;
-
+            m_isMotionNotify = false;
             m_curItem = m_curItems[i];
 #if 0
             if (m_curItem->menuItemCallback())
                 m_curItem->menuItemCallback()(this, m_curItem->arg());
 #endif
-
-            for (unsigned int i = 0; i < m_items.size(); i++) {
-                if (m_items[i]->parent() == m_curItem) {
-                    hasChildren = true;
-                    break;
-                }
-            }
-            if (hasChildren) {
-                if (m_subMenu) {
-                    if (m_event) 
-                        m_event->disconnect(m_subMenu);
-
-                    if (m_subMenu->childMenu()) 
-                        m_subMenu->childMenu()->close();
-
-                    delete m_subMenu;
-                    m_subMenu = nullptr;
-                }
-                // TODO: menu`s position (y) needs to adjust base on its height
-                // and what if width is changable?
-                m_subMenu = new XtkMenuX11(this, 
-                        m_x + m_width, m_y + event.y, m_width, this, m_curItem);
-                this->setChildMenu(m_subMenu);
-                m_subMenu->setEvent(m_event);
-                if (m_event) 
-                    m_event->connect(m_subMenu);
-
-                m_subMenu->addItems(m_items);
-                m_subMenu->draw();
-            } else {
-                // TODO: click the leaf node, close ALL menus
-                m_closeParentMenu(this);
-            }
+            m_walkChildMenu(m_y + event.y);
             
             break;
         }
@@ -187,6 +198,19 @@ void XtkMenuX11::buttonPress(XButtonEvent event)
 
 void XtkMenuX11::motionNotify(XButtonEvent event) 
 {
+    for (unsigned int i = 0; i < m_curItems.size(); i++) {
+        if (event.y < int(i + 1) * m_itemHeight && 
+            event.y > (int)i * m_itemHeight) {
+            m_isMotionNotify = true;
+            if (m_curItem == m_curItems[i])
+                return;
+
+            m_curItem = m_curItems[i];
+            m_walkChildMenu(m_y + event.y);
+            
+            break;
+        }
+    }
 }
 
 void XtkMenuX11::draw() 

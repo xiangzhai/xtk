@@ -88,6 +88,7 @@ public:
 
 private:
     void m_closeParentMenu(XtkMenuX11* menu);
+    void m_walkChildMenu(int y = 0);
 
 private:
     XtkWindowX11* m_parent = nullptr;
@@ -106,6 +107,7 @@ private:
     XtkMenuX11* m_subMenu = nullptr;
     XtkMenuX11* m_childMenu = nullptr;
     XtkMenuItem* m_curItem = nullptr;
+    bool m_isMotionNotify = false;
 };
 
 };
