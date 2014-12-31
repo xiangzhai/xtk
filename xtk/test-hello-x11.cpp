@@ -60,17 +60,6 @@ public:
             delete imageButton;
             imageButton = nullptr;
         }
-
-        if (menu) {
-            for (unsigned int i = 0; i < menu->items().size(); i++) {
-                if (menu->items()[i]) {
-                    delete menu->items()[i];
-                    menu->items()[i] = nullptr;
-                }
-            }
-            delete menu;
-            menu = nullptr;
-        }
     }
 
     void eventButtonPress() 
@@ -154,36 +143,44 @@ private:
         HelloWindowX11* thisPtr = reinterpret_cast<HelloWindowX11*>(arg);
         std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << button << " " 
                   << arg << " " << button->text() << std::endl;
-        // TODO: menu stuff
-        if (thisPtr->menu == nullptr) { 
-            thisPtr->menu = new Xtk::XtkMenuX11(thisPtr, 10, 500, 200);
-            thisPtr->menu->setEvent(thisPtr->m_event);
-            for (int i = 0; i < 6; i++) { 
-                std::string text = "MENU-ITEM-" + std::to_string(i + 1);
-                Xtk::XtkMenuItem* item = new Xtk::XtkMenuItem(text, 
+        
+        thisPtr->menu = new Xtk::XtkMenuX11(thisPtr, 10, 500, 200);
+        thisPtr->menu->setEvent(thisPtr->m_event);
+        for (int i = 0; i < 8; i++) { 
+            std::string text = "MENU-ITEM-" + std::to_string(i + 1);
+            Xtk::XtkMenuItem* item = new Xtk::XtkMenuItem(text, 
                     thisPtr->menuItemCallback, (void*)text.c_str());
-                thisPtr->menu->addItem(item);
-                for (int j = 0; j < 4; j++) {
-                    std::string text = "MENU-SUB-ITEM-" + 
-                        std::to_string(i + 1) + "-" + std::to_string(j + 1);
-                    Xtk::XtkMenuItem* subitem = new Xtk::XtkMenuItem(text, 
+            thisPtr->menu->addItem(item);
+            for (int j = 0; j < 6; j++) {
+                std::string text = "MENU-SUB1-ITEM-" + 
+                    std::to_string(i + 1) + "-" + std::to_string(j + 1);
+                Xtk::XtkMenuItem* sub1item = new Xtk::XtkMenuItem(text, 
                         thisPtr->menuItemCallback, (void*)text.c_str(), item);
-                    thisPtr->menu->addItem(subitem);
-                    for (int k = 0; k < 2; k++) {
-                        std::string text = "MENU-SUB2-ITEM-" + 
-                            std::to_string(i + 1) + "-" + std::to_string(j + 1) + 
-                            "-" + std::to_string(k + 1);
-                        Xtk::XtkMenuItem* sub2item = new Xtk::XtkMenuItem(text, 
-                                thisPtr->menuItemCallback, (void*)text.c_str(), 
-                                subitem);
-                        thisPtr->menu->addItem(sub2item);
+                thisPtr->menu->addItem(sub1item);
+                for (int k = 0; k < 4; k++) {
+                    std::string text = "MENU-SUB2-ITEM-" + 
+                        std::to_string(i + 1) + "-" + std::to_string(j + 1) + 
+                        "-" + std::to_string(k + 1);
+                    Xtk::XtkMenuItem* sub2item = new Xtk::XtkMenuItem(text, 
+                            thisPtr->menuItemCallback, (void*)text.c_str(), 
+                            sub1item);
+                    thisPtr->menu->addItem(sub2item);
+                    for (int l = 0; l < 2; l++) {
+                        std::string text = "MENU-SUB3-ITEM-" + 
+                            std::to_string(i + 1) + "-" + 
+                            std::to_string(j + 1) + "-" + 
+                            std::to_string(k + 1) + "-" + 
+                            std::to_string(l + 1);
+                        Xtk::XtkMenuItem* sub3item = new Xtk::XtkMenuItem(
+                                text, thisPtr->menuItemCallback, 
+                                (void*)text.c_str(), sub2item);
+                        thisPtr->menu->addItem(sub3item);
                     }
                 }
             }
-            thisPtr->m_event->connect(thisPtr->menu);
-            thisPtr->menu->draw();
-        } else 
-            thisPtr->menu->show();
+        }
+        thisPtr->m_event->connect(thisPtr->menu);
+        thisPtr->menu->draw();
         return nullptr;
     }
 

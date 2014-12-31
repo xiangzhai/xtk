@@ -59,13 +59,16 @@ public:
                int x, 
                int y, 
                int width, 
+               XtkMenuX11* parentMenu = nullptr,
                XtkMenuItem* parentItem = nullptr,
                int height = 1);
     ~XtkMenuX11();
 
-    XtkMenuX11* child() { return m_child; }
-    void setChild(XtkMenuX11* child);
-    std::vector<XtkMenuItem*> items() { return m_items; }
+    XtkWindowX11* parent() const { return m_parent; }
+    XtkMenuX11* parentMenu() const { return m_parentMenu; }
+    XtkMenuX11* childMenu() const { return m_childMenu; }
+    void setChildMenu(XtkMenuX11* childMenu);
+    std::vector<XtkMenuItem*> items() const { return m_items; }
 
     void setEvent(XtkEventX11* event);
     void addItem(std::string text, 
@@ -84,21 +87,25 @@ public:
     void draw();
 
 private:
+    void m_closeParentMenu(XtkMenuX11* menu);
+
+private:
     XtkWindowX11* m_parent = nullptr;
     int m_x = 0;
     int m_y = 0;
     int m_width = 0;
+    XtkMenuX11* m_parentMenu = nullptr;
     XtkMenuItem* m_parentItem = nullptr;
     int m_height = 0;
-    cairo_t* context = nullptr;
+    cairo_t* m_context = nullptr;
     XtkEventX11* m_event = nullptr;
-    int itemHeight = 30;
+    int m_itemHeight = 30;
     std::vector<XtkMenuItem*> m_items;
-    int pointerY = -1;
-    std::vector<XtkMenuItem*> curItems;
-    XtkMenuX11* sub = nullptr;
-    XtkMenuX11* m_child = nullptr;
-    XtkMenuItem* curItem = nullptr;
+    int m_pointerY = -1;
+    std::vector<XtkMenuItem*> m_curItems;
+    XtkMenuX11* m_subMenu = nullptr;
+    XtkMenuX11* m_childMenu = nullptr;
+    XtkMenuItem* m_curItem = nullptr;
 };
 
 };

@@ -11,6 +11,7 @@ XtkMenuX11::XtkMenuX11(XtkWindowX11* parent,
                        int x, 
                        int y, 
                        int width,
+                       XtkMenuX11* parentMenu,
                        XtkMenuItem* parentItem, 
                        int height) 
   : XtkWindowX11(parent->display(),
@@ -23,10 +24,11 @@ XtkMenuX11::XtkMenuX11(XtkWindowX11* parent,
                  None, 
                  0, 
                  _NET_WM_WINDOW_TYPE_MENU), 
-    m_parent(parent), 
+    m_parent((XtkMenuX11*)parent), 
     m_x(x),
     m_y(y),
     m_width(width), 
+    m_parentMenu(parentMenu),
     m_parentItem(parentItem),
     m_height(height)
 {
@@ -34,11 +36,8 @@ XtkMenuX11::XtkMenuX11(XtkWindowX11* parent,
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << " " << this->window() 
               << std::endl;
 #endif
-    context = cairo_create(this->surface());
-    if (context == nullptr) 
-        std::cerr << "ERROR: fail to create context" << std::endl;
-    // from theme
-    itemHeight = this->theme()->getInt("menu", "itemheight", 30);
+    m_context = cairo_create(this->surface());
+    m_itemHeight = this->theme()->getInt("menu", "itemheight", 30);
 }
 
 XtkMenuX11::~XtkMenuX11() 
@@ -46,6 +45,8 @@ XtkMenuX11::~XtkMenuX11()
 #if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
+    if (m_event)
+        m_event->disconnect(this);
 }
 
 void XtkMenuX11::setEvent(XtkEventX11* event) 
@@ -63,7 +64,7 @@ void XtkMenuX11::addItem(std::string text,
                          std::string iconFileName) 
 {
     if (parent == m_parentItem) {
-        m_height += itemHeight;
+        m_height += m_itemHeight;
         setSize(m_width, m_height);
     }
     m_items.push_back(new XtkMenuItem(
@@ -73,7 +74,7 @@ void XtkMenuX11::addItem(std::string text,
 void XtkMenuX11::addItem(XtkMenuItem* item) 
 {
     if (item->parent() == m_parentItem) {
-        m_height += itemHeight;
+        m_height += m_itemHeight;
         setSize(m_width, m_height);
     }
     m_items.push_back(item);
@@ -83,7 +84,7 @@ void XtkMenuX11::addItems(std::vector<XtkMenuItem*> items)
 {
     for (unsigned int i = 0; i < items.size(); i++) {
         if (items[i]->parent() == m_parentItem) {
-            m_height += itemHeight;
+            m_height += m_itemHeight;
             setSize(m_width, m_height);
         }
         m_items.push_back(items[i]);
@@ -98,55 +99,86 @@ void XtkMenuX11::leaveNotify()
 {
 }
 
-void XtkMenuX11::setChild(XtkMenuX11* child) 
+void XtkMenuX11::setChildMenu(XtkMenuX11* childMenu) 
 {
-    m_child = child;
+    m_childMenu = childMenu;
+}
+
+void XtkMenuX11::m_closeParentMenu(XtkMenuX11* menu) 
+{
+    XtkMenuX11* child = nullptr;
+
+    if (menu == nullptr)
+        return;
+
+    child = menu->childMenu();
+    if (child) {
+        delete child;
+        child = nullptr;
+    }
+    // root menu item
+    if (menu->parentMenu() == nullptr) {
+        for (unsigned int i = 0; i < m_items.size(); i++) {
+            if (m_items[i]) {
+                delete m_items[i]; 
+                m_items[i] = nullptr;
+            }
+        }
+        delete menu;
+        menu = nullptr;
+        return;
+    }
+    m_closeParentMenu(menu->parentMenu());
 }
 
 void XtkMenuX11::buttonPress(XButtonEvent event) 
-{ 
-    for (unsigned int i = 0; i < curItems.size(); i++) {
-        if (event.y < int(i + 1) * itemHeight && 
-            event.y > (int)i * itemHeight) {
-            if (curItem == curItems[i]) 
+{
+    for (unsigned int i = 0; i < m_curItems.size(); i++) {
+        if (event.y < int(i + 1) * m_itemHeight && 
+            event.y > (int)i * m_itemHeight) {
+            bool hasChildren = false;
+            
+            if (m_curItem == m_curItems[i])
                 return;
 
-            curItem = curItems[i];
-            bool hasChildren = false;
+            m_curItem = m_curItems[i];
+#if 0
+            if (m_curItem->menuItemCallback())
+                m_curItem->menuItemCallback()(this, m_curItem->arg());
+#endif
 
             for (unsigned int i = 0; i < m_items.size(); i++) {
-                if (m_items[i]->parent() == curItem) {
+                if (m_items[i]->parent() == m_curItem) {
                     hasChildren = true;
                     break;
                 }
             }
             if (hasChildren) {
-                if (sub != nullptr) {
+                if (m_subMenu) {
                     if (m_event) 
-                        m_event->disconnect(sub);
+                        m_event->disconnect(m_subMenu);
 
-                    if (sub->child()) 
-                        sub->child()->close();
+                    if (m_subMenu->childMenu()) 
+                        m_subMenu->childMenu()->close();
 
-                    delete sub;
-                    sub = nullptr;
+                    delete m_subMenu;
+                    m_subMenu = nullptr;
                 }
-                
-                sub = new XtkMenuX11(this, 
-                        m_x + m_width, m_y + event.y, m_width, curItem);
-                this->setChild(sub);
-                sub->setEvent(m_event);
+                // TODO: menu`s position (y) needs to adjust base on its height
+                // and what if width is changable?
+                m_subMenu = new XtkMenuX11(this, 
+                        m_x + m_width, m_y + event.y, m_width, this, m_curItem);
+                this->setChildMenu(m_subMenu);
+                m_subMenu->setEvent(m_event);
                 if (m_event) 
-                    m_event->connect(sub);
+                    m_event->connect(m_subMenu);
 
-                sub->addItems(m_items);
-                sub->draw();
+                m_subMenu->addItems(m_items);
+                m_subMenu->draw();
             } else {
                 // TODO: click the leaf node, close ALL menus
+                m_closeParentMenu(this);
             }
-
-            if (curItem->menuItemCallback()) 
-                curItem->menuItemCallback()(this, curItem->arg());
             
             break;
         }
@@ -166,39 +198,39 @@ void XtkMenuX11::draw()
 
     colorHtmlToCairo(this->theme()->string("menu", "bordercolor", "#ffffff"), 
         r, g, b);
-    cairo_set_source_rgb(context, r, g, b);
-    cairo_set_line_width(context, this->theme()->getInt("menu", "borderwidth", 1));
-    cairo_rectangle(context, 0, 0, m_width, m_height);
-    cairo_stroke_preserve(context);
+    cairo_set_source_rgb(m_context, r, g, b);
+    cairo_set_line_width(m_context, this->theme()->getInt("menu", "borderwidth", 1));
+    cairo_rectangle(m_context, 0, 0, m_width, m_height);
+    cairo_stroke_preserve(m_context);
 
-    curItems.clear();
+    m_curItems.clear();
     for (unsigned int i = 0; i < m_items.size(); i++) {
         if (m_items[i]->parent() == m_parentItem)  
-            curItems.push_back(m_items[i]);
+            m_curItems.push_back(m_items[i]);
     }
         
-    for (unsigned int i = 0; i < curItems.size(); i++) {
+    for (unsigned int i = 0; i < m_curItems.size(); i++) {
         // FIXME: hover is LOW efficiency ;(
 #if 0
         // hover
-        if (pointerY < (int)(i + 1) * itemHeight && 
-            pointerY > (int)i * itemHeight) {
+        if (m_pointerY < (int)(i + 1) * m_itemHeight && 
+            m_pointerY > (int)i * m_itemHeight) {
             colorHtmlToCairo(
                 this->theme()->string("menu", "borderhovercolor", "#ffffff"), 
                 r, g, b);
-            cairo_set_source_rgb(context, r, g, b);
-            cairo_set_line_width(context, 
+            cairo_set_source_rgb(m_context, r, g, b);
+            cairo_set_line_width(m_context, 
                     this->theme()->getInt("menu", "borderwidth", 1));
-            cairo_rectangle(context, 0, i * itemHeight, m_width, itemHeight);
-            cairo_stroke(context);
+            cairo_rectangle(m_context, 0, i * m_itemHeight, m_width, m_itemHeight);
+            cairo_stroke(m_context);
         }
 #endif
         // text
         XtkText textObj(this->surface(), 
-                curItems[i]->text(), 30, y, m_width, itemHeight);
+                m_curItems[i]->text(), 30, y, m_width, m_itemHeight);
         textObj.draw();
         // increase
-        y += itemHeight;
+        y += m_itemHeight;
     }
 }
 
