@@ -65,6 +65,7 @@ public:
 
     XtkMenuX11* child() { return m_child; }
     void setChild(XtkMenuX11* child);
+    std::vector<XtkMenuItem*> items() { return m_items; }
 
     void setEvent(XtkEventX11* event);
     void addItem(std::string text, 

@@ -37,7 +37,7 @@ XtkMenuX11::XtkMenuX11(XtkWindowX11* parent,
     context = cairo_create(this->surface());
     if (context == nullptr) 
         std::cerr << "ERROR: fail to create context" << std::endl;
-    
+    // from theme
     itemHeight = this->theme()->getInt("menu", "itemheight", 30);
 }
 
@@ -46,13 +46,6 @@ XtkMenuX11::~XtkMenuX11()
 #if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
-    for (unsigned int i = 0; i < m_items.size(); i++) {
-        if (m_items[i]) {
-            delete m_items[i];
-            m_items[i] = nullptr;
-        }
-    }
-    m_items.clear();
 }
 
 void XtkMenuX11::setEvent(XtkEventX11* event) 
@@ -135,7 +128,7 @@ void XtkMenuX11::buttonPress(XButtonEvent event)
                     if (sub->child()) 
                         sub->child()->close();
 
-                    sub->close();
+                    delete sub;
                     sub = nullptr;
                 }
                 
@@ -152,10 +145,9 @@ void XtkMenuX11::buttonPress(XButtonEvent event)
                 // TODO: click the leaf node, close ALL menus
             }
 
-#if 0
-            if (parentItem->menuItemCallback()) 
-                parentItem->menuItemCallback()(this, parentItem->arg());
-#endif
+            if (curItem->menuItemCallback()) 
+                curItem->menuItemCallback()(this, curItem->arg());
+            
             break;
         }
     }
