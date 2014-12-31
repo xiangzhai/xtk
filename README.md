@@ -42,4 +42,6 @@ sudo make install
 - [ ] Button/setSize
 - [ ] Button/ImageButton
 - [ ] Menu
+- [ ] Menu/XGrabPointer
+- [ ] Menu/XGrabKeyboard
 - [ ] Wayland
