@@ -38,6 +38,13 @@ XtkMenuX11::XtkMenuX11(XtkWindowX11* parent,
 #endif
     m_context = cairo_create(this->surface());
     m_itemHeight = this->theme()->getInt("menu", "itemheight", 30);
+    XGrabPointer(this->display(), 
+                 this->window(), 
+                 True, 
+                 ButtonPressMask | ButtonReleaseMask | ButtonMotionMask, 
+                 GrabModeAsync, GrabModeAsync, 
+                 None, None, 
+                 CurrentTime);
 }
 
 XtkMenuX11::~XtkMenuX11() 
@@ -45,6 +52,7 @@ XtkMenuX11::~XtkMenuX11()
 #if XTK_DEBUG
     std::cout << "DEBUG: " << __PRETTY_FUNCTION__ << std::endl;
 #endif
+    XUngrabPointer(this->display(), CurrentTime);
     if (m_event)
         m_event->disconnect(this);
 }
